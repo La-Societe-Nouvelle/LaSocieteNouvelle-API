@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/la-societe-nouvelle">
+  <Resource auth="Container" driverClassName="org.postgresql.Driver" maxActive="20" maxIdle="10" maxWAIT="-1" name="jdbc/postgres" password="access2Systema" type="javax.sql.DataSource" url="jdbc:postgresql://systema.postgres.database.azure.com:5432/systema-database?ssl=true" username="api_access@Systema"/>
+</Context>
