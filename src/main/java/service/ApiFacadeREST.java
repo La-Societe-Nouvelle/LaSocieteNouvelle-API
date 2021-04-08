@@ -34,12 +34,10 @@ public class ApiFacadeREST {
     @Context
     private HttpServletRequest request;
     public ApiFacadeREST() {}
-
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
-    /* REQUEST - CKECK SERVER
+    /* SERVICE - VERIFICATION SERVERR
     ----------------------------------------------------------------------------------------------------
-    Request to check if the server is on
+    Requête : serveur disponible
     ----------------------------------------------------------------------------------------------------
     */
     
@@ -49,12 +47,10 @@ public class ApiFacadeREST {
     public Boolean serverON () {
         return true;
     }
-    
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-    
-    /* REQUEST - SIREN
+        
+    /* SERVICE - REQUETE SIMPLE
     ----------------------------------------------------------------------------------------------------
-    Request for the Societal Footprint of a legal unit (company)
+    Requête : obtention de l'empreinte sociétale d'une unité légale
     ----------------------------------------------------------------------------------------------------
     */
     @GET
@@ -62,27 +58,23 @@ public class ApiFacadeREST {
     @Produces({MediaType.APPLICATION_JSON})
     public SingleResponse findProfilSocialBySiren (
             @PathParam("siren") String siren) {
+        
+        // Connection à la base de données
         DatabaseConnection connection = new DatabaseConnection();
+        
+        // Construction de la réponse
         SingleResponse response = new SingleResponse(connection,siren);
+        
+        //Fermeture de la connection
         connection.close();
+        
         return response;
     }
     
-    /* REQUEST - DENOMINATION 
+    /* SERVICE - RECHERCHE UNITE LEGALE 
     ----------------------------------------------------------------------------------------------------
-    Request to find a legal unit in the database by its denomination
+    Requête : recherche d'une unité légale à partir de sa dénomination
     ----------------------------------------------------------------------------------------------------
-    Les résultats correspondent aux unités légales dont la raison sociale (denomination ou prénom et 
-    nom) contient la recherche
-    Note : Si le temps de réponse dépasse 5000 ms, seuls les résultats exacts sont revoyés
-    
-    Critères de classement des résultats (dans l'ordre d'importance) :
-        - Catégorie juridique (société puis entrepreneur individuel)
-        - Tranche d'effectifs (de la taille la plus grande à la plus petite)
-        - Ordre alphabétique
-    Les critères ont été choisis pour renvoyer les unités légales ayant davantage de probabilité d'être 
-    recherchées.
-    ----------------------------------------------------------------------------------------------------  
      */
 
     @GET
@@ -96,12 +88,10 @@ public class ApiFacadeREST {
         connection.close();
         return response;
     }
-    
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-    
-    /* REQUEST - DEFAULT DATA
+        
+    /* SERVICE - DONNEES PAR DEFAUT
     ----------------------------------------------------------------------------------------------------
-    Request for defaut economic value quality by country (required) and activity
+    Requête : Obtention de données statistiques
     ----------------------------------------------------------------------------------------------------
     */
     @GET
@@ -115,23 +105,13 @@ public class ApiFacadeREST {
         connection.close();
         return response;
     }
-    
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-    
-    /* REQUEST - RANKING OF COMPANIES
+        
+    /* SERVICE - CLASSEMENT (En cours de développement)
     ----------------------------------------------------------------------------------------------------
-    Request for the "best" companies in a specific country and economic sector
+    Requête : Obtention des unités légales les plus performantes (ESE)
     ----------------------------------------------------------------------------------------------------
-    Seules les unités légales dont au moins une valeur est ajustée (déclaration ou utilisation de 
-    données publiques propres à l'entreprise)
-    Le classement repose sur un tri rapide avec une comparaison suivant les valeurs des indicateurs.
-    Pour chaque indicateur, un score est obtenu correspondant à un rapport coeficienté des valeurs, avec 
-    la règle suivante :
-        - si les deux valeurs sont déclarées : 
-            coef 5 pour GHG; coef 4 pour ECO, NRG, coef 3 pour ART, SOC, ,coef 2 
-        - si une des deux valeurs est déclarée :
-    ----------------------------------------------------------------------------------------------------  
      */
+    
     @GET
     @Path("/rank")
     @Produces({MediaType.APPLICATION_JSON})
@@ -143,9 +123,6 @@ public class ApiFacadeREST {
         MultipleResponse response = new MultipleResponse(connection,activite,region,departement);
         connection.close();
         return response;
-    }
-    
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-    
+    }    
     
 }

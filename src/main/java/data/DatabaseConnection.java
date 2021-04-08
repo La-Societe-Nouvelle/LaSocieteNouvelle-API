@@ -27,10 +27,13 @@ public class DatabaseConnection {
     private Statement statement;
     private ResultSet resultSet;
     
+    /* ---------- Constructor ---------- */
+    
     public DatabaseConnection() {
         connection = getConnection();
     }
     
+    // Initialize the connection to the database
     private static Connection getConnection() {
         try {
             Context ctx = new InitialContext();
@@ -43,12 +46,18 @@ public class DatabaseConnection {
         }
     }
     
+    /* ---------- execution ---------- */
+    
+    // Execute the query and return the resultset - only SELECT query available
     public ResultSet executeQuery(String query) throws SQLException {
         statement = connection.createStatement();
         resultSet = statement.executeQuery(query);
         return resultSet;
     }
     
+    /* ---------- close ---------- */
+    
+    // Close the connection to the database
     public void close() {
         try {
             connection.close();

@@ -23,26 +23,38 @@ import java.util.logging.Logger;
 
 public class SingleResponse implements Serializable {
     
+    // header
     private HeaderResponse header;
+    // body
     private ProfilSocialResponse profil;
 
-    /* ---------- CONSTRUCTORS ---------- */
+    /* ---------- Contructor ---------- */
     
     public SingleResponse (DatabaseConnection connection, String siren) {
+        
+        // Initiate the header
         header = new HeaderResponse();
+        
+        // check if the pattern of the siren number is correct
         if (siren.matches("[0-9]{9}")) {
+            
             try {
+                // Buil the response
                 profil = new ProfilSocialResponse(connection,header,siren);
+             
+            // Exception    
             } catch (SQLException ex) {
                 header.setStatut(Statut.SERVER_ERROR);
                 Logger.getLogger(SingleResponse.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
+        // Case - pattern doesn't match a siren number
         } else {
             header.setStatut(Statut.BAD_REQUEST);
         }
     }
     
-    /* ---------- GETTERS ---------- */
+    /* ---------- Getters ---------- */
 
     public HeaderResponse getHeader() {
         return header;

@@ -11,9 +11,6 @@ package meta;
  */
 public enum Flag {
     
-    HIGH ("h","Valeur déclarée",true,true),
-    MEDIUM ("m","Valeur déclarée",true,true),
-    LOW ("l","Valeur déclarée",true,true),
     PUBLISHED("p","Valeur déclarée",true,true),
     REPORTED ("r","Valeur obtenue à partir de données publiées",false,true),
     ESTIMATED ("e","Valeur estimée à partir de données publiées",false,true),
@@ -55,12 +52,6 @@ public enum Flag {
     public static Flag getFlag (String flag) {
         
         switch (flag) {
-            case "h" :
-                return HIGH;
-            case "m" :
-                return MEDIUM;
-            case "l" :
-                return LOW;
             case "p" :
                 return PUBLISHED;
             case "r" :
