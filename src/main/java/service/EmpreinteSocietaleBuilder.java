@@ -27,25 +27,33 @@ public class EmpreinteSocietaleBuilder {
     private DatabaseConnection connection;
     private UniteLegaleResponse uniteLegale;
     
+    // Constructeur
     public EmpreinteSocietaleBuilder(DatabaseConnection connection) {
         this.connection = connection;
     }
     
+    // Build the ESE of a legal unit
     public HashMap<String,IndicateurResponse> buildEmpreinteSocietaleUniteLegale(UniteLegaleResponse uniteLegale) throws SQLException {
         this.uniteLegale = uniteLegale;
         HashMap<String,IndicateurResponse> empreinteSocietale = new HashMap<>();
+        HashMap<String,IndicateurResponse> empreinteSocietaleReference = buildEmpreinteSocietaleUniteLegale("FRA",uniteLegale.getActivitePrincipale().substring(0,2));
         for (Indicateur indicateur : Indicateur.values()) {
             IndicateurResponse indicateurResponse = new IndicateurResponse(connection, indicateur, uniteLegale);
             if (indicateurResponse.getValue()!=null) {
+                if (indicateur.isIqve()) {
+                    indicateurResponse.setReference(empreinteSocietaleReference.get(indicateur.getCode()));
+                }
                 empreinteSocietale.put(indicateur.getCode(),indicateurResponse);
             } else if (indicateur.isIqve()) {
                 indicateurResponse = getDefaultIndicateurResponse(indicateur);
+                indicateurResponse.setReference(empreinteSocietaleReference.get(indicateur.getCode()));
                 empreinteSocietale.put(indicateur.getCode(),indicateurResponse);
             }
         }
         return empreinteSocietale;
     }
     
+    // Build a default ESE based on the country and the main activity
     public HashMap<String,IndicateurResponse> buildEmpreinteSocietaleUniteLegale(String pays,String nace) throws SQLException {
         HashMap<String,IndicateurResponse> empreinteSocietale = new HashMap<>();
         for (Indicateur indicateur : Indicateur.values()) {
@@ -62,6 +70,7 @@ public class EmpreinteSocietaleBuilder {
         return empreinteSocietale;
     }
     
+    // Redirection to the function for each indicator
     private IndicateurResponse getDefaultIndicateurResponse(Indicateur indicateur) throws SQLException {
         switch (indicateur) {
             case ECO:
@@ -93,25 +102,27 @@ public class EmpreinteSocietaleBuilder {
         }
     }
     
+    // Functions to calculate the default value for the legal unit (or for a default data request)
     private IndicateurResponse getDefaultECO() throws SQLException {
-        /*Double txVA = getValue("SELECT value FROM echo.dv_txva_nace_fr_cdv WHERE division = '"+uniteLegaleResponse.getActivitePrincipale().substring(0,2)+"';")/100.0;
-        //Double txIMP = getValue("SELECT value FROM echo.dv_tximp_nace_fr_cdv WHERE division = '"+uniteLegaleResponse.getActivitePrincipale().substring(0,2)+"';")/100.0;
+        DataResult rsNVA = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2));
+        // Not currently available
+        //DataResult rsIMP = DataAccess.getDefaultData(connection, Indicateur.IMP, "FRA", uniteLegale.getActivitePrincipale().substring(0,2));
+        DataResult rsECO_FRA = DataAccess.getDefaultData(connection, Indicateur.ECO, "FRA", "00");
         Double tauxContributionDirecte = 1.0;
         Double nbEtablissements = getValue("SELECT COUNT(*) AS value FROM sirene.etablissements "
-                + "WHERE siren = '"+uniteLegaleResponse.getIdentifiant()+"' "
-                + "AND etatAdministratifEtablissement = 'A' AND statutDiffusionEtablissement = 'O';");
+                + "WHERE siren = '"+uniteLegale.getSiren()+"' "
+                + "AND etatAdministratifEtablissement = 'A';");
         if (nbEtablissements>0) {
             Double nbEtablissementsEtranger = getValue("SELECT COUNT(*) AS value FROM sirene.etablissements "
-                    + "WHERE siren = '"+uniteLegaleResponse.getIdentifiant()+"' "
+                    + "WHERE siren = '"+uniteLegale.getSiren()+"' "
                     + "AND codePaysEtrangerEtablissement != '' "
-                    + "AND etatAdministratifEtablissement = 'A' AND statutDiffusionEtablissement = 'O';");
+                    + "AND etatAdministratifEtablissement = 'A';");
             tauxContributionDirecte = nbEtablissementsEtranger/nbEtablissements;
-        }*/
+        }
         DataResult rs = DataAccess.getDefaultData(connection, Indicateur.ECO, "FRA", uniteLegale.getActivitePrincipale().substring(0,2));
         return new IndicateurResponse(
                 Indicateur.ECO,
-                //txVA*tauxContributionDirecte*100.0+(1-txVA)*getDefaultECO("FR",null).getValue(),
-                rs.value,
+                (rsNVA.value/100.0)*tauxContributionDirecte*100.0 + (1.0-(rsNVA.value/100.0))*rsECO_FRA.value,
                 rs.flag,rs.uncertainty,rs.time,
                 rs.source,rs.info);
     }
@@ -263,5 +274,5 @@ public class EmpreinteSocietaleBuilder {
                 rs.flag,rs.uncertainty,
                 rs.time,rs.source,"");
     }
-    
+        
 }

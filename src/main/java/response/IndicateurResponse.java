@@ -31,6 +31,10 @@ public class IndicateurResponse {
     private String source;
     private String info;
     private Flag indice;
+    private Double valueReference;
+    private String valueReferenceYear;
+    private String valueReferenceSource;
+    private String valueReferenceInfo;
         
     //IndicateurResponseBuilder
     public IndicateurResponse (DatabaseConnection connection,Indicateur indicateur,UniteLegaleResponse uniteLegale) throws SQLException {
@@ -56,7 +60,7 @@ public class IndicateurResponse {
         this.code = indicateur.getCode();
         this.libelle = indicateur.getLibelle();
         this.unit = indicateur.getUnit();
-        this.value = value;
+        this.value = round(value);
         this.flag = flag;
         this.uncertainty = uncertainty;
         this.year = year;
@@ -71,7 +75,7 @@ public class IndicateurResponse {
         this.code = resultSet.getString("indic");
         this.libelle = indicateur.getLibelle();
         this.unit = indicateur.getUnit();
-        this.value = resultSet.getDouble("value");
+        this.value = round(resultSet.getDouble("value"));
         this.flag = resultSet.getString("flag");
         this.uncertainty = resultSet.getDouble("uncertainty");
         this.year = resultSet.getString("year");
@@ -85,7 +89,7 @@ public class IndicateurResponse {
         this.code = indicateur.getCode();
         this.libelle = indicateur.getLibelle();
         this.unit = indicateur.getUnit();
-        this.value = dataResult.value;
+        this.value = round(dataResult.value);
         this.flag = dataResult.flag;
         this.uncertainty = dataResult.uncertainty;
         this.year = dataResult.time;
@@ -113,6 +117,12 @@ public class IndicateurResponse {
     }
     public void setInfo(String info) {
         this.info = info;
+    }
+    public void setReference(IndicateurResponse indicateurReference) {
+        this.valueReference = indicateurReference.getValue();
+        this.valueReferenceYear = indicateurReference.getYear();
+        this.valueReferenceSource = indicateurReference.getSource();
+        this.valueReferenceInfo = indicateurReference.getInfo();
     }
   
     /* ----- GETTERS ----- */
@@ -150,6 +160,19 @@ public class IndicateurResponse {
     public Boolean isValueDeclared () {
         return indice.isDeclared();
     }
+    public Double getValueReference() {
+        return valueReference;
+    }
+    public String getValueReferenceYear() {
+        return valueReferenceYear;
+    }
+    public String getValueReferenceSource() {
+        return valueReferenceSource;
+    }
+    public String getValueReferenceInfo() {
+        return valueReferenceInfo;
+    }
+    
     
     /* ----- UTILS ----- */
     

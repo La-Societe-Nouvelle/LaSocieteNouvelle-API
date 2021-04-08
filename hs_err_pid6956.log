@@ -14,7 +14,7 @@
 #   Set larger code cache with -XX:ReservedCodeCacheSize=
 # This output file may be truncated or incomplete.
 #
-#  Out of Memory Error (t:/workspace/open/src/hotspot/os/windows/os_windows.cpp:3301), pid=1876, tid=340
+#  Out of Memory Error (t:/workspace/open/src/hotspot/os/windows/os_windows.cpp:3301), pid=6956, tid=8976
 #
 # JRE version:  (13.0.2+8) (build )
 # Java VM: Java HotSpot(TM) 64-Bit Server VM (13.0.2+8, mixed mode, aot, sharing, tiered, compressed oops, g1 gc, windows-amd64)
@@ -23,16 +23,16 @@
 
 ---------------  S U M M A R Y ------------
 
-Command Line: -Dclassworlds.conf=C:\Program Files\NetBeans-11.3\netbeans\java\maven\bin\m2.conf -Dmaven.home=C:\Program Files\NetBeans-11.3\netbeans\java\maven -Dmaven.multiModuleProjectDirectory=C:\Users\SylvainPro\Documents\NetBeansProjects\API-LaSocieteNouvelle org.codehaus.plexus.classworlds.launcher.Launcher -Dmaven.ext.class.path=C:\Program Files\NetBeans-11.3\netbeans\java\maven-nblib\netbeans-eventspy.jar -Dfile.encoding=UTF-8 clean install
+Command Line: -Dclassworlds.conf=C:\Program Files\NetBeans-11.3\netbeans\java\maven\bin\m2.conf -Dmaven.home=C:\Program Files\NetBeans-11.3\netbeans\java\maven -Dmaven.multiModuleProjectDirectory=C:\Users\SylvainPro\Documents\NetBeansProjects\API-LaSocieteNouvelle org.codehaus.plexus.classworlds.launcher.Launcher -Dnetbeans.deploy=true -Dmaven.ext.class.path=C:\Program Files\NetBeans-11.3\netbeans\java\maven-nblib\netbeans-eventspy.jar -Dfile.encoding=UTF-8 package
 
-Host: Intel(R) Xeon(R) Platinum 8171M CPU @ 2.60GHz, 2 cores, 3G,  Windows 10 , 64 bit Build 18362 (10.0.18362.1350)
-Time: Mon Mar 29 17:22:50 2021 Temps universel coordonné elapsed time: 0 seconds (0d 0h 0m 0s)
+Host: Intel(R) Xeon(R) Platinum 8272CL CPU @ 2.60GHz, 2 cores, 3G,  Windows 10 , 64 bit Build 18362 (10.0.18362.1350)
+Time: Wed Apr  7 10:46:34 2021 Temps universel coordonné elapsed time: 0 seconds (0d 0h 0m 0s)
 
 ---------------  T H R E A D  ---------------
 
-Current thread (0x000002b8d710e800):  JavaThread "Unknown thread" [_thread_in_vm, id=340, stack(0x000000fdaab00000,0x000000fdaac00000)]
+Current thread (0x0000025385aac800):  JavaThread "Unknown thread" [_thread_in_vm, id=8976, stack(0x000000a7fbf00000,0x000000a7fc000000)]
 
-Stack: [0x000000fdaab00000,0x000000fdaac00000]
+Stack: [0x000000a7fbf00000,0x000000a7fc000000]
 Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
 V  [jvm.dll+0x624f9a]
 V  [jvm.dll+0x770cfa]
@@ -62,22 +62,22 @@ C  [ntdll.dll+0x6d721]
 ---------------  P R O C E S S  ---------------
 
 Threads class SMR info:
-_java_thread_list=0x00007ff95547ccb8, length=0, elements={
+_java_thread_list=0x00007ffac3cfccb8, length=0, elements={
 }
 
 Java Threads: ( => current thread )
 
 Other Threads:
-  0x000002b8d713d000 GCTaskThread "GC Thread#0" [stack: 0x000000fdaac00000,0x000000fdaad00000] [id=1704]
-  0x000002b8d7147800 ConcurrentGCThread "G1 Main Marker" [stack: 0x000000fdaad00000,0x000000fdaae00000] [id=4324]
-  0x000002b8d714a000 ConcurrentGCThread "G1 Conc#0" [stack: 0x000000fdaae00000,0x000000fdaaf00000] [id=3608]
+  0x0000025385adb000 GCTaskThread "GC Thread#0" [stack: 0x000000a7fc000000,0x000000a7fc100000] [id=7528]
+  0x0000025385ae5000 ConcurrentGCThread "G1 Main Marker" [stack: 0x000000a7fc100000,0x000000a7fc200000] [id=3692]
+  0x0000025385ae7800 ConcurrentGCThread "G1 Conc#0" [stack: 0x000000a7fc200000,0x000000a7fc300000] [id=4012]
 
-[error occurred during error reporting (printing all threads), id 0xc0000005, EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ff954cb51d7]
+[error occurred during error reporting (printing all threads), id 0xc0000005, EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ffac35351d7]
 
 VM state:not at safepoint (not fully initialized)
 
 VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
-[0x000002b8d710b340] Heap_lock - owner thread: 0x000002b8d710e800
+[0x0000025385aa8ac0] Heap_lock - owner thread: 0x0000025385aac800
 
 Heap address: 0x00000000c0000000, size: 1024 MB, Compressed Oops mode: Non-zero based: 0x00000000c0000000
 Narrow klass base: 0x0000000000000000, Narrow klass shift: 0
@@ -98,60 +98,60 @@ Internal exceptions (0 events):
 No events
 
 Events (8 events):
-Event: 0.007 Loaded shared library C:\Program Files\Java\jdk-13.0.2\bin\zip.dll
-Event: 0.007 Loaded shared library C:\Program Files\Java\jdk-13.0.2\bin\jimage.dll
-Event: 0.008 Loading shared library C:\Program Files\Java\jdk-13.0.2\lib\libjava.base-coop.dll failed, error code 126
-Event: 0.009 Loading shared library C:\Program Files\Java\jdk-13.0.2\lib\libjava.logging-coop.dll failed, error code 126
-Event: 0.009 Loading shared library C:\Program Files\Java\jdk-13.0.2\lib\libjdk.compiler-coop.dll failed, error code 126
-Event: 0.009 Loading shared library C:\Program Files\Java\jdk-13.0.2\lib\libjdk.scripting.nashorn-coop.dll failed, error code 126
-Event: 0.009 Loading shared library C:\Program Files\Java\jdk-13.0.2\lib\libjdk.internal.vm.ci-coop.dll failed, error code 126
-Event: 0.009 Loading shared library C:\Program Files\Java\jdk-13.0.2\lib\libjdk.internal.vm.compiler-coop.dll failed, error code 126
+Event: 0.006 Loaded shared library C:\Program Files\Java\jdk-13.0.2\bin\zip.dll
+Event: 0.006 Loaded shared library C:\Program Files\Java\jdk-13.0.2\bin\jimage.dll
+Event: 0.007 Loading shared library C:\Program Files\Java\jdk-13.0.2\lib\libjava.base-coop.dll failed, error code 126
+Event: 0.007 Loading shared library C:\Program Files\Java\jdk-13.0.2\lib\libjava.logging-coop.dll failed, error code 126
+Event: 0.007 Loading shared library C:\Program Files\Java\jdk-13.0.2\lib\libjdk.compiler-coop.dll failed, error code 126
+Event: 0.008 Loading shared library C:\Program Files\Java\jdk-13.0.2\lib\libjdk.scripting.nashorn-coop.dll failed, error code 126
+Event: 0.008 Loading shared library C:\Program Files\Java\jdk-13.0.2\lib\libjdk.internal.vm.ci-coop.dll failed, error code 126
+Event: 0.008 Loading shared library C:\Program Files\Java\jdk-13.0.2\lib\libjdk.internal.vm.compiler-coop.dll failed, error code 126
 
 
 Dynamic libraries:
-0x00007ff7342c0000 - 0x00007ff7342cf000 	C:\Program Files\Java\jdk-13.0.2\bin\java.exe
-0x00007ff985920000 - 0x00007ff985b10000 	C:\WINDOWS\SYSTEM32\ntdll.dll
-0x00007ff985560000 - 0x00007ff985612000 	C:\WINDOWS\System32\KERNEL32.DLL
-0x00007ff983660000 - 0x00007ff983905000 	C:\WINDOWS\System32\KERNELBASE.dll
-0x00007ff983260000 - 0x00007ff98335a000 	C:\WINDOWS\System32\ucrtbase.dll
-0x00007ff965fa0000 - 0x00007ff965fb8000 	C:\Program Files\Java\jdk-13.0.2\bin\jli.dll
-0x00007ff984ea0000 - 0x00007ff984f43000 	C:\WINDOWS\System32\ADVAPI32.dll
-0x00007ff984f50000 - 0x00007ff984fee000 	C:\WINDOWS\System32\msvcrt.dll
-0x00007ff9841e0000 - 0x00007ff984277000 	C:\WINDOWS\System32\sechost.dll
-0x00007ff9842e0000 - 0x00007ff9843ff000 	C:\WINDOWS\System32\RPCRT4.dll
-0x00007ff985690000 - 0x00007ff985824000 	C:\WINDOWS\System32\USER32.dll
-0x00007ff9839a0000 - 0x00007ff9839c1000 	C:\WINDOWS\System32\win32u.dll
-0x00007ff983b50000 - 0x00007ff983b76000 	C:\WINDOWS\System32\GDI32.dll
-0x00007ff983360000 - 0x00007ff9834f8000 	C:\WINDOWS\System32\gdi32full.dll
-0x00007ff982890000 - 0x00007ff98292e000 	C:\WINDOWS\System32\msvcp_win.dll
-0x00007ff958b30000 - 0x00007ff958b45000 	C:\Program Files\Java\jdk-13.0.2\bin\VCRUNTIME140.dll
-0x00007ff973110000 - 0x00007ff973394000 	C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.18362.1440_none_9e7dbfb9e45e8e67\COMCTL32.dll
-0x00007ff984b60000 - 0x00007ff984e96000 	C:\WINDOWS\System32\combase.dll
-0x00007ff983910000 - 0x00007ff983991000 	C:\WINDOWS\System32\bcryptPrimitives.dll
-0x00007ff9798d0000 - 0x00007ff9798da000 	C:\WINDOWS\SYSTEM32\VERSION.dll
-0x00007ff983d60000 - 0x00007ff983d8e000 	C:\WINDOWS\System32\IMM32.DLL
-0x00007ff954690000 - 0x00007ff95472b000 	C:\Program Files\Java\jdk-13.0.2\bin\msvcp140.dll
-0x00007ff9549c0000 - 0x00007ff95551d000 	C:\Program Files\Java\jdk-13.0.2\bin\server\jvm.dll
-0x00007ff985550000 - 0x00007ff985558000 	C:\WINDOWS\System32\PSAPI.DLL
-0x00007ff980620000 - 0x00007ff980644000 	C:\WINDOWS\SYSTEM32\WINMM.dll
-0x00007ff965150000 - 0x00007ff965159000 	C:\WINDOWS\SYSTEM32\WSOCK32.dll
-0x00007ff984ff0000 - 0x00007ff98505f000 	C:\WINDOWS\System32\WS2_32.dll
-0x00007ff9805f0000 - 0x00007ff98061d000 	C:\WINDOWS\SYSTEM32\WINMMBASE.dll
-0x00007ff982930000 - 0x00007ff98297a000 	C:\WINDOWS\System32\cfgmgr32.dll
-0x00007ff9827e0000 - 0x00007ff9827f1000 	C:\WINDOWS\System32\kernel.appcore.dll
-0x00007ff958ae0000 - 0x00007ff958af0000 	C:\Program Files\Java\jdk-13.0.2\bin\verify.dll
-0x00007ff972850000 - 0x00007ff972a44000 	C:\WINDOWS\SYSTEM32\DBGHELP.DLL
-0x00007ff9725d0000 - 0x00007ff9725fa000 	C:\WINDOWS\SYSTEM32\dbgcore.DLL
-0x00007ff958aa0000 - 0x00007ff958ac6000 	C:\Program Files\Java\jdk-13.0.2\bin\java.dll
-0x00007ff958a80000 - 0x00007ff958a97000 	C:\Program Files\Java\jdk-13.0.2\bin\zip.dll
-0x00007ff958a70000 - 0x00007ff958a7a000 	C:\Program Files\Java\jdk-13.0.2\bin\jimage.dll
+0x00007ff7f17b0000 - 0x00007ff7f17bf000 	C:\Program Files\Java\jdk-13.0.2\bin\java.exe
+0x00007ffb0c900000 - 0x00007ffb0caf0000 	C:\WINDOWS\SYSTEM32\ntdll.dll
+0x00007ffb0b800000 - 0x00007ffb0b8b2000 	C:\WINDOWS\System32\KERNEL32.DLL
+0x00007ffb09970000 - 0x00007ffb09c15000 	C:\WINDOWS\System32\KERNELBASE.dll
+0x00007ffb0a6c0000 - 0x00007ffb0a7ba000 	C:\WINDOWS\System32\ucrtbase.dll
+0x00007ffafa440000 - 0x00007ffafa458000 	C:\Program Files\Java\jdk-13.0.2\bin\jli.dll
+0x00007ffb0af30000 - 0x00007ffb0afd3000 	C:\WINDOWS\System32\ADVAPI32.dll
+0x00007ffb0b180000 - 0x00007ffb0b21e000 	C:\WINDOWS\System32\msvcrt.dll
+0x00007ffb0c680000 - 0x00007ffb0c717000 	C:\WINDOWS\System32\sechost.dll
+0x00007ffb0bdc0000 - 0x00007ffb0bedf000 	C:\WINDOWS\System32\RPCRT4.dll
+0x00007ffb0afe0000 - 0x00007ffb0b174000 	C:\WINDOWS\System32\USER32.dll
+0x00007ffb09920000 - 0x00007ffb09941000 	C:\WINDOWS\System32\win32u.dll
+0x00007ffb0b220000 - 0x00007ffb0b246000 	C:\WINDOWS\System32\GDI32.dll
+0x00007ffb0a7c0000 - 0x00007ffb0a958000 	C:\WINDOWS\System32\gdi32full.dll
+0x00007ffb09c50000 - 0x00007ffb09cee000 	C:\WINDOWS\System32\msvcp_win.dll
+0x00007ffaff100000 - 0x00007ffaff115000 	C:\Program Files\Java\jdk-13.0.2\bin\VCRUNTIME140.dll
+0x00007ffafc580000 - 0x00007ffafc804000 	C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.18362.1440_none_9e7dbfb9e45e8e67\COMCTL32.dll
+0x00007ffb0ba80000 - 0x00007ffb0bdb6000 	C:\WINDOWS\System32\combase.dll
+0x00007ffb09d50000 - 0x00007ffb09dd1000 	C:\WINDOWS\System32\bcryptPrimitives.dll
+0x00007ffb01160000 - 0x00007ffb0116a000 	C:\WINDOWS\SYSTEM32\VERSION.dll
+0x00007ffb0bee0000 - 0x00007ffb0bf0e000 	C:\WINDOWS\System32\IMM32.DLL
+0x00007ffafa9b0000 - 0x00007ffafaa4b000 	C:\Program Files\Java\jdk-13.0.2\bin\msvcp140.dll
+0x00007ffac3240000 - 0x00007ffac3d9d000 	C:\Program Files\Java\jdk-13.0.2\bin\server\jvm.dll
+0x00007ffb0ba70000 - 0x00007ffb0ba78000 	C:\WINDOWS\System32\PSAPI.DLL
+0x00007ffad6750000 - 0x00007ffad6759000 	C:\WINDOWS\SYSTEM32\WSOCK32.dll
+0x00007ffb06ce0000 - 0x00007ffb06d04000 	C:\WINDOWS\SYSTEM32\WINMM.dll
+0x00007ffb0b930000 - 0x00007ffb0b99f000 	C:\WINDOWS\System32\WS2_32.dll
+0x00007ffb062a0000 - 0x00007ffb062cd000 	C:\WINDOWS\SYSTEM32\WINMMBASE.dll
+0x00007ffb0a960000 - 0x00007ffb0a9aa000 	C:\WINDOWS\System32\cfgmgr32.dll
+0x00007ffb09850000 - 0x00007ffb09861000 	C:\WINDOWS\System32\kernel.appcore.dll
+0x00007ffb050e0000 - 0x00007ffb050f0000 	C:\Program Files\Java\jdk-13.0.2\bin\verify.dll
+0x00007ffaf9fa0000 - 0x00007ffafa194000 	C:\WINDOWS\SYSTEM32\DBGHELP.DLL
+0x00007ffaf9f10000 - 0x00007ffaf9f3a000 	C:\WINDOWS\SYSTEM32\dbgcore.DLL
+0x00007ffaff050000 - 0x00007ffaff076000 	C:\Program Files\Java\jdk-13.0.2\bin\java.dll
+0x00007ffafb080000 - 0x00007ffafb097000 	C:\Program Files\Java\jdk-13.0.2\bin\zip.dll
+0x00007ffb04550000 - 0x00007ffb0455a000 	C:\Program Files\Java\jdk-13.0.2\bin\jimage.dll
 
 dbghelp: loaded successfully - version: 4.0.5 - missing functions: none
 symbol engine: initialized successfully - sym options: 0x614 - pdb path: .;C:\Program Files\Java\jdk-13.0.2\bin;C:\WINDOWS\SYSTEM32;C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.18362.1440_none_9e7dbfb9e45e8e67;C:\Program Files\Java\jdk-13.0.2\bin\server
 
 VM Arguments:
 jvm_args: -Dclassworlds.conf=C:\Program Files\NetBeans-11.3\netbeans\java\maven\bin\m2.conf -Dmaven.home=C:\Program Files\NetBeans-11.3\netbeans\java\maven -Dmaven.multiModuleProjectDirectory=C:\Users\SylvainPro\Documents\NetBeansProjects\API-LaSocieteNouvelle 
-java_command: org.codehaus.plexus.classworlds.launcher.Launcher -Dmaven.ext.class.path=C:\Program Files\NetBeans-11.3\netbeans\java\maven-nblib\netbeans-eventspy.jar -Dfile.encoding=UTF-8 clean install
+java_command: org.codehaus.plexus.classworlds.launcher.Launcher -Dnetbeans.deploy=true -Dmaven.ext.class.path=C:\Program Files\NetBeans-11.3\netbeans\java\maven-nblib\netbeans-eventspy.jar -Dfile.encoding=UTF-8 package
 java_class_path (initial): C:\Program Files\NetBeans-11.3\netbeans\java\maven\boot\plexus-classworlds-2.5.2.jar
 Launcher Type: SUN_STANDARD
 
@@ -187,7 +187,7 @@ JAVA_HOME=C:\Program Files\Java\jdk-13.0.2
 PATH=C:\Python39\Scripts\;C:\Python39\;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Users\SylvainPro\AppData\Local\Microsoft\WindowsApps;;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2019.3.3\bin;;C:\Program Files\JetBrains\IntelliJ IDEA 2019.3.3\bin;;C:\Users\SylvainPro\AppData\Roaming\npm;C:\Users\SylvainPro\AppData\Local\Programs\Microsoft VS Code\bin
 USERNAME=SylvainPro
 OS=Windows_NT
-PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 85 Stepping 4, GenuineIntel
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 85 Stepping 7, GenuineIntel
 
 
 
@@ -196,10 +196,10 @@ PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 85 Stepping 4, GenuineIntel
 OS: Windows 10 , 64 bit Build 18362 (10.0.18362.1350)
 HyperV virtualization detected
 
-CPU:total 2 (initial active 2) (2 cores per cpu, 1 threads per core) family 6 model 85 stepping 4, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, avx2, aes, clmul, erms, rtm, 3dnowpref, lzcnt, tsc, bmi1, bmi2, adx, evex, fma
+CPU:total 2 (initial active 2) (2 cores per cpu, 1 threads per core) family 6 model 85 stepping 7, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, avx2, aes, clmul, erms, rtm, 3dnowpref, lzcnt, tsc, bmi1, bmi2, adx, evex, fma
 
-Memory: 4k page, system-wide physical 4095M (754M free)
-TotalPageFile size 5119M (AvailPageFile size 48M)
+Memory: 4k page, system-wide physical 4095M (415M free)
+TotalPageFile size 5119M (AvailPageFile size 31M)
 current process WorkingSet (physical memory assigned to process): 10M, peak: 10M
 current process commit charge ("private bytes"): 47M, peak: 111M
 

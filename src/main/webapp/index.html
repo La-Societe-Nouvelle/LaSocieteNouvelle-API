@@ -1,10 +1,44 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Start Page</title>
+        <title>API - La Société Nouvelle</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="global.css">
     </head>
     <body>
-        <h1>API - La Société Nouvelle</h1>
+        <div id="header">
+            <h1>Bienvenue sur l'API <a href="http://lasocietenouvelle.org" target="_blank">La Société Nouvelle</a></h1>
+        </div>
+        <div class="chapter">
+            <h2>SERVICES</h2>
+            <div class="strip">
+                <h3>/siren/{siren}</h3>
+                <p>
+                    Retourne l'empreinte sociétale d'une unité légale à partir de son numéro de siren
+                </p>
+            </div>
+            <div class="strip">
+                <h3>/search?denomination={denomination}&page={num}</h3>
+                <p>
+                    Retourne les unités légales dont le nom correspond à la recherche
+                </p>
+            </div>
+        </div>
+        <div class="chapter">
+            <h2>CODE SOURCE</h2>
+            <div>
+                <p>
+                    Le code source est accessible sur via GitHub : <a href="https://github.com/SylvainH-LSN/LaSocieteNouvelle-API" target="_blank">LaSocieteNouvelle-API</a>
+                </p>
+            </div>
+        </div>
+        <div class="chapter">
+            <h2>HEBERGEMENT</h2>
+            <div>
+                <p>
+                    L'API est hebergée par Microsoft AZURE
+                </p>
+            </div>
+        </div>
     </body>
 </html>

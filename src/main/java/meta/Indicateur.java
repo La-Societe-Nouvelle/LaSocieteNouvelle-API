@@ -13,6 +13,7 @@ import java.util.ArrayList;
  */
 public enum Indicateur {
     
+    /* --- INDICATEURS ESE --- */
     ECO ("ECO","Contribution à l'Economie nationale","%",true,5),
     ART ("ART","Contribution aux Métiers d'Art et aux Savoir-Faire","%",true,2),
     SOC ("SOC","Contribution aux Acteurs d'Intérêt social","%",true,3),
@@ -25,7 +26,11 @@ public enum Indicateur {
     NRG ("NRG","Intensité de Consommation d'Energie","kJ/€",true,-4),
     WAT ("WAT","Intensité de Consommation d'Eau","L/€",true,-3),
     HAZ ("HAZ","Intensité d'Utilisation de produits dangereux pour la Santé et l'Environnement","g/€",true,-2),
-    IEP ("IEP","Index de l'Egalité professionnelle Femmes-Hommes","/100",false,1);
+    /* --- AUTRES INDICATEURS --- */
+    IEP ("IEP","Index de l'Egalité professionnelle Femmes-Hommes","/100",false,1),
+    /* --- DONNEES COMPLEMENTAIRES DISPONIBLES --- */
+    NVA ("NVA","Taux de Valeur Ajoutée Nette","%",false,null),
+    IMP ("IMP","Taux d'Importations","%",false,null);
         
     private Indicateur (String code, String libelle, String unit, Boolean iqve,Integer coef) {
         this.code = code;

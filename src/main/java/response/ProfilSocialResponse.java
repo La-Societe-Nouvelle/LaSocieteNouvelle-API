@@ -58,10 +58,18 @@ public class ProfilSocialResponse implements Serializable {
     /* ----- GETTERS ----- */
 
     public UniteLegaleResponse getDescriptionUniteLegale() {
-        return uniteLegale;
+        if (uniteLegale.getSiren()!=null) {
+            return uniteLegale;
+        } else {
+            return null;
+        }
     }
     public HashMap<String,IndicateurResponse> getEmpreinteSocietale() {
-        return empreinteSocietale.getEmpreinteSocietaleResponse();
+        if (empreinteSocietale!=null) {
+            return empreinteSocietale.getEmpreinteSocietaleResponse();
+        } else {
+            return null;
+        }
     }
         
 }
