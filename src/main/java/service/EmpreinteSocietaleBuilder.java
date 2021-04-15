@@ -49,10 +49,10 @@ public class EmpreinteSocietaleBuilder {
         HashMap<String,IndicateurResponse> empreinteSocietaleReference = buildEmpreinteSocietaleUniteLegale("FRA",uniteLegale.getActivitePrincipale().substring(0,2));
         
         for (Indicateur indicateur : Indicateur.values()) {
-            
+            System.out.println(" -> "+indicateur.getCode());
             // Try to get the value from the database (specific value for the legal unit)
             IndicateurResponse indicateurResponse = new IndicateurResponse(connection, indicateur, uniteLegale);
-            
+                        
             // Calculate the default value if there is no value published & the indicator is include in the CSF
             if (indicateurResponse.getValue()==null & indicateur.isIqve()) {
                 indicateurResponse = getDefaultIndicateurResponse(indicateur);
@@ -61,11 +61,16 @@ public class EmpreinteSocietaleBuilder {
             // Set the comparative value for the CSF indicators (for which a comparative value is available)
             if (indicateur.isIqve()) {
                 indicateurResponse.setReference(empreinteSocietaleReference.get(indicateur.getCode()));
+                empreinteSocietale.put(indicateur.getCode(),indicateurResponse);
             }
             
             // Put the indicator in the corporate social footprint
-            empreinteSocietale.put(indicateur.getCode(),indicateurResponse);
+            if (indicateurResponse.getValue()!=null) {
+                empreinteSocietale.put(indicateur.getCode(),indicateurResponse);
+            }
+            
         }
+        System.out.println("done");
         return empreinteSocietale;
     }
     
@@ -154,10 +159,10 @@ public class EmpreinteSocietaleBuilder {
         }
         
         // Calculate the value
-        Double value = NVA_rate.value*eco_nva + (1-NVA_rate.value-IMP_rate.value)*eco_fra.value;
+        Double value = (NVA_rate.value/100)*eco_nva + (1-(NVA_rate.value/100)-(IMP_rate.value/100))*eco_fra.value;
         // Calculate the uncertainty
-        Double maxValue = NVA_rate.value*min(eco_nva*1.5,100.0) + (1-NVA_rate.value-IMP_rate.value)*min(eco_fra.value*(1+eco_fra.uncertainty/100),100.0) ;
-        Double minValue = NVA_rate.value*max(eco_nva*0.5,0.0)   + (1-NVA_rate.value-IMP_rate.value)*max(eco_fra.value*(1-eco_fra.uncertainty/100),0.0) ;
+        Double maxValue = (NVA_rate.value/100)*min(eco_nva*1.5,100.0) + (1-(NVA_rate.value/100)-(IMP_rate.value/100))*min(eco_fra.value*(1+eco_fra.uncertainty/100),100.0) ;
+        Double minValue = (NVA_rate.value/100)*max(eco_nva*0.5,0.0)   + (1-(NVA_rate.value/100)-(IMP_rate.value/100))*max(eco_fra.value*(1-eco_fra.uncertainty/100),0.0) ;
         Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
         
         return new IndicateurResponse(
@@ -189,16 +194,16 @@ public class EmpreinteSocietaleBuilder {
         }
         
         // Calculate the value
-        Double value = NVA_rate.value*art_nva + (1-NVA_rate.value)*art_fra.value;
+        Double value = (NVA_rate.value/100)*art_nva + (1-(NVA_rate.value/100))*art_fra.value;
         // Calculate the uncertainty
-        Double maxValue = NVA_rate.value*min(art_nva*1.5,100.0) + (1-NVA_rate.value)*min(art_fra.value*(1+art_fra.uncertainty/100),100.0) ;
-        Double minValue = NVA_rate.value*max(art_nva*0.5,0.0)   + (1-NVA_rate.value)*max(art_fra.value*(1-art_fra.uncertainty/100),0.0) ;
+        Double maxValue = (NVA_rate.value/100)*min(art_nva*1.5,100.0) + (1-(NVA_rate.value/100))*min(art_fra.value*(1+art_fra.uncertainty/100),100.0) ;
+        Double minValue = (NVA_rate.value/100)*max(art_nva*0.5,0.0)   + (1-(NVA_rate.value/100))*max(art_fra.value*(1-art_fra.uncertainty/100),0.0) ;
         Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
         
         return new IndicateurResponse(
                 Indicateur.ART,
                 value,
-                Flag.ADJUSTED.getCode(),uncertainty,
+                Flag.ADJUSTED_DATA.getCode(),uncertainty,
                 art_fra.time,art_fra.source+",SIRENE","");
     }
     
@@ -214,31 +219,31 @@ public class EmpreinteSocietaleBuilder {
         if (uniteLegale.getIsEconomieSocialeSolidaire()) {
             
             // Calculate the value
-            Double value = NVA_rate.value*100.0 + (1-NVA_rate.value)*soc_fra.value;
+            Double value = (NVA_rate.value/100)*100.0 + (1-(NVA_rate.value/100))*soc_fra.value;
             // Calculate the uncertainty
-            Double maxValue = NVA_rate.value*100.0*1.00 + (1-NVA_rate.value)*min(soc_fra.value*(1+soc_fra.uncertainty/100),100.0) ;
-            Double minValue = NVA_rate.value*100.0*0.75 + (1-NVA_rate.value)*max(soc_fra.value*(1-soc_fra.uncertainty/100),0.0) ;
+            Double maxValue = (NVA_rate.value/100)*100.0*1.00 + (1-(NVA_rate.value/100))*min(soc_fra.value*(1+soc_fra.uncertainty/100),100.0) ;
+            Double minValue = (NVA_rate.value/100)*100.0*0.75 + (1-(NVA_rate.value/100))*max(soc_fra.value*(1-soc_fra.uncertainty/100),0.0) ;
             Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
             
             return new IndicateurResponse(
                     Indicateur.SOC,
                     value,
-                    Flag.ADJUSTED.getCode(),uncertainty,
+                    Flag.ADJUSTED_DATA.getCode(),uncertainty,
                     soc_fra.time,soc_fra.source+", SIRENE","");
             
         } else {
             
             // Calculate the value
-            Double value = NVA_rate.value*0.0 + (1-NVA_rate.value)*soc_fra.value;
+            Double value = (NVA_rate.value/100)*0.0 + (1-(NVA_rate.value/100))*soc_fra.value;
             // Calculate the uncertainty
-            Double maxValue = NVA_rate.value*25.0 + (1-NVA_rate.value)*min(soc_fra.value*(1+soc_fra.uncertainty/100),100.0) ;
-            Double minValue = NVA_rate.value*00.0 + (1-NVA_rate.value)*max(soc_fra.value*(1-soc_fra.uncertainty/100),0.0) ;
+            Double maxValue = (NVA_rate.value/100)*25.0 + (1-(NVA_rate.value/100))*min(soc_fra.value*(1+soc_fra.uncertainty/100),100.0) ;
+            Double minValue = (NVA_rate.value/100)*00.0 + (1-(NVA_rate.value/100))*max(soc_fra.value*(1-soc_fra.uncertainty/100),0.0) ;
             Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
             
             return new IndicateurResponse(
                     Indicateur.SOC,
                     value,
-                    Flag.ADJUSTED.getCode(),uncertainty,
+                    Flag.ADJUSTED_DATA.getCode(),uncertainty,
                     soc_fra.time,soc_fra.source+", SIRENE","");
         }
     }
@@ -256,16 +261,16 @@ public class EmpreinteSocietaleBuilder {
             DataResult knw_fra = DataAccess.getDefaultData(connection, Indicateur.KNW, "FRA", null);
             
             // Calculate the value
-            Double value = NVA_rate.value*100.0 + (1-NVA_rate.value)*knw_fra.value;
+            Double value = (NVA_rate.value/100)*100.0 + (1-(NVA_rate.value/100))*knw_fra.value;
             // Calculate the uncertainty
-            Double maxValue = NVA_rate.value*100.0*1.00 + NVA_rate.value*min(knw_fra.value*(1+knw_fra.uncertainty/100),100.0) ;
-            Double minValue = NVA_rate.value*100.0*0.75 + NVA_rate.value*max(knw_fra.value*(1-knw_fra.uncertainty/100),0.0) ;
+            Double maxValue = (NVA_rate.value/100)*100.0*1.00 + (NVA_rate.value/100)*min(knw_fra.value*(1+knw_fra.uncertainty/100),100.0) ;
+            Double minValue = (NVA_rate.value/100)*100.0*0.75 + (NVA_rate.value/100)*max(knw_fra.value*(1-knw_fra.uncertainty/100),0.0) ;
             Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
             
             return new IndicateurResponse(
                     Indicateur.KNW,
                     value,
-                    Flag.STATISTIC.getCode(),uncertainty,
+                    Flag.SECTOR_SPECIFIC_DATA.getCode(),uncertainty,
                     knw_fra.time,knw_fra.source+", SIRENE","");
         } else {
             
@@ -275,7 +280,7 @@ public class EmpreinteSocietaleBuilder {
             return new IndicateurResponse(
                     Indicateur.KNW,
                     rs.value,
-                    Flag.STATISTIC.getCode(),rs.uncertainty,
+                    Flag.DEFAULT_DATA.getCode(),rs.uncertainty,
                     rs.time,rs.source+",SIRENE","");
         }
     }
@@ -294,16 +299,16 @@ public class EmpreinteSocietaleBuilder {
             DataResult dis_fra = DataAccess.getDefaultData(connection, Indicateur.DIS, "FRA", null);
             
             // Calculate the value
-            Double value = NVA_rate.value*0.0 + (1-NVA_rate.value)*dis_fra.value;
+            Double value = (NVA_rate.value/100)*0.0 + (1-(NVA_rate.value/100))*dis_fra.value;
             // Calculate the uncertainty
-            Double maxValue = NVA_rate.value*25.0 + (1-NVA_rate.value)*min(dis_fra.value*(1+dis_fra.uncertainty/100),100.0) ;
-            Double minValue = NVA_rate.value*00.0 + (1-NVA_rate.value)*max(dis_fra.value*(1-dis_fra.uncertainty/100),0.0) ;
+            Double maxValue = (NVA_rate.value/100)*25.0 + (1-(NVA_rate.value/100))*min(dis_fra.value*(1+dis_fra.uncertainty/100),100.0) ;
+            Double minValue = (NVA_rate.value/100)*00.0 + (1-(NVA_rate.value/100))*max(dis_fra.value*(1-dis_fra.uncertainty/100),0.0) ;
             Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
                         
             return new IndicateurResponse(
                     Indicateur.DIS,
                     value,
-                    Flag.STATISTIC.getCode(),uncertainty,
+                    Flag.ADJUSTED_DATA.getCode(),uncertainty,
                     dis_fra.time,dis_fra.source+", SIRENE","");
         
         } else {
@@ -333,16 +338,16 @@ public class EmpreinteSocietaleBuilder {
             DataResult geq_fra = DataAccess.getDefaultData(connection, Indicateur.GEQ, "FRA", null);
             
             // Calculate the value
-            Double value = NVA_rate.value*0.0 + (1-NVA_rate.value)*geq_fra.value;
+            Double value = (NVA_rate.value/100)*0.0 + (1-(NVA_rate.value/100))*geq_fra.value;
             // Calculate the uncertainty
-            Double maxValue = NVA_rate.value*25.0 + (1-NVA_rate.value)*min(geq_fra.value*(1+geq_fra.uncertainty/100),100.0) ;
-            Double minValue = NVA_rate.value*00.0 + (1-NVA_rate.value)*max(geq_fra.value*(1-geq_fra.uncertainty/100),0.0) ;
+            Double maxValue = (NVA_rate.value/100)*25.0 + (1-(NVA_rate.value/100))*min(geq_fra.value*(1+geq_fra.uncertainty/100),100.0) ;
+            Double minValue = (NVA_rate.value/100)*00.0 + (1-(NVA_rate.value/100))*max(geq_fra.value*(1-geq_fra.uncertainty/100),0.0) ;
             Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
             
             return new IndicateurResponse(
                     Indicateur.GEQ,
                     value,
-                    Flag.STATISTIC.getCode(),uncertainty,
+                    Flag.ADJUSTED_DATA.getCode(),uncertainty,
                     geq_fra.time,geq_fra.source+", SIRENE","");
             
         } else {

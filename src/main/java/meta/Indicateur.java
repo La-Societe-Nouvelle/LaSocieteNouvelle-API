@@ -14,38 +14,42 @@ import java.util.ArrayList;
 public enum Indicateur {
     
     /* --- INDICATEURS ESE --- */
-    ECO ("ECO","Contribution à l'Economie nationale","%",true,5),
-    ART ("ART","Contribution aux Métiers d'Art et aux Savoir-Faire","%",true,2),
-    SOC ("SOC","Contribution aux Acteurs d'Intérêt social","%",true,3),
-    KNW ("KNW","Contribution à l'Evolution des Connaissances et des Compétences","%",true,2),
-    DIS ("DIS","Indice de répartition des revenus","",true,-2),
-    GEQ ("GEQ","Indice d'Egalité des revenus entre les Femmes et les Hommes","",true,-3),
-    GHG ("GHG","Intensité d'Emission de Gaz à Effet de Serre","gCO2e/€",true,-5),
-    MAT ("MAT","Intensité d'Extraction de Matières premières","g/€",true,-3),
-    WAS ("WAS","Intensité de Production de Déchets","g/€",true,-4),
-    NRG ("NRG","Intensité de Consommation d'Energie","kJ/€",true,-4),
-    WAT ("WAT","Intensité de Consommation d'Eau","L/€",true,-3),
-    HAZ ("HAZ","Intensité d'Utilisation de produits dangereux pour la Santé et l'Environnement","g/€",true,-2),
+    ECO ("ECO","Contribution à l'Economie nationale",                                               "%",        true,   +5,     1),
+    ART ("ART","Contribution aux Métiers d'Art et aux Savoir-Faire",                                "%",        true,   +2,     1),
+    SOC ("SOC","Contribution aux Acteurs d'Intérêt social",                                         "%",        true,   +3,     1),
+    KNW ("KNW","Contribution à l'Evolution des Connaissances et des Compétences",                   "%",        true,   +2,     1),
+    DIS ("DIS","Indice de répartition des revenus",                                                 "/100",     true,   -2,     1),
+    GEQ ("GEQ","Indice d'Ecart des rémunérations entre les Femmes et les Hommes",                   "%",        true,   -3,     1),
+    GHG ("GHG","Intensité d'Emission de Gaz à Effet de Serre",                                      "gCO2e/€",  true,   -5,     0),
+    MAT ("MAT","Intensité d'Extraction de Matières premières",                                      "g/€",      true,   -3,     0),
+    WAS ("WAS","Intensité de Production de Déchets",                                                "g/€",      true,   -4,     0),
+    NRG ("NRG","Intensité de Consommation d'Energie",                                               "kJ/€",     true,   -4,     0),
+    WAT ("WAT","Intensité de Consommation d'Eau",                                                   "L/€",      true,   -3,     1),
+    HAZ ("HAZ","Intensité d'Utilisation de produits dangereux pour la Santé et l'Environnement",    "g/€",      true,   -2,     1),
+    
     /* --- AUTRES INDICATEURS --- */
-    IEP ("IEP","Index de l'Egalité professionnelle Femmes-Hommes","/100",false,1),
+    IEP ("IEP","Index de l'Egalité professionnelle Femmes-Hommes",                                  "/100",     false,  +1,     0),
+    
     /* --- DONNEES COMPLEMENTAIRES DISPONIBLES --- */
-    NVA ("NVA","Taux de Valeur Ajoutée Nette","%",false,null),
-    IMP ("IMP","Taux d'Importations","%",false,null);
-        
-    private Indicateur (String code, String libelle, String unit, Boolean iqve,Integer coef) {
-        this.code = code;
-        this.libelle = libelle;
-        this.unit = unit;
-        this.iqve = iqve;
-        this.coef = coef;
-    }
+    NVA ("NVA","Taux de Valeur Ajoutée Nette",                                                      "%",        false,  null,   1),
+    IMP ("IMP","Taux d'Importations",                                                               "%",        false,  null,   1);
         
     private final String code;
     private final String libelle;
     private final String unit;
     private final Boolean iqve;
     private final Integer coef;
+    private final Integer precision;
     
+    private Indicateur (String code, String libelle, String unit, Boolean iqve,Integer coef,Integer precision) {
+        this.code = code;
+        this.libelle = libelle;
+        this.unit = unit;
+        this.iqve = iqve;
+        this.coef = coef;
+        this.precision = precision;
+    }
+        
     public String getCode () {
         return this.code;
     }
@@ -64,6 +68,10 @@ public enum Indicateur {
 
     public Integer getCoef() {
         return coef;
+    }
+    
+    public Integer getPrecision() {
+        return precision;
     }
 
     /* ----- AUTRES ----- */

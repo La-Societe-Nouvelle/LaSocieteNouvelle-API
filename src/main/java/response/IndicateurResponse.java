@@ -36,16 +36,18 @@ public class IndicateurResponse {
     private String valueReferenceSource;
     private String valueReferenceInfo;
         
-    //IndicateurResponseBuilder
+    /* ---------- Constructors ---------- */
+    
+    // Default constructor (used published data or returning value null)
     public IndicateurResponse (DatabaseConnection connection,Indicateur indicateur,UniteLegaleResponse uniteLegale) throws SQLException {
         code = indicateur.getCode();
         libelle = indicateur.getLibelle();
         unit = indicateur.getUnit();
         DataResult rs = DataAccess.getIndicateurData(connection, indicateur, uniteLegale);
         if (rs!=null) {
-            this.value = round(rs.value);
+            this.value = round(rs.value,indicateur.getPrecision());
             this.flag = rs.flag;
-            this.uncertainty = rs.uncertainty;
+            this.uncertainty = round(rs.uncertainty,0);
             this.year = rs.time;
             this.source = rs.source;
             this.info = rs.info;
@@ -53,6 +55,7 @@ public class IndicateurResponse {
         }
     }
     
+    // Full constructor (all attributs in parameters)
     public IndicateurResponse (Indicateur indicateur,
                                Double value,
                                String flag,Double uncertainty,String year,
@@ -60,44 +63,15 @@ public class IndicateurResponse {
         this.code = indicateur.getCode();
         this.libelle = indicateur.getLibelle();
         this.unit = indicateur.getUnit();
-        this.value = round(value);
+        this.value = round(value,indicateur.getPrecision());
         this.flag = flag;
-        this.uncertainty = uncertainty;
+        this.uncertainty = round(uncertainty,0);
         this.year = year;
         this.source = source;
         this.info = info;
         this.indice = Flag.getFlag(flag);
     }
-    
-    public IndicateurResponse (ResultSet resultSet) throws SQLException {
         
-        Indicateur indicateur = Indicateur.getIndicateur(resultSet.getString("indic"));
-        this.code = resultSet.getString("indic");
-        this.libelle = indicateur.getLibelle();
-        this.unit = indicateur.getUnit();
-        this.value = round(resultSet.getDouble("value"));
-        this.flag = resultSet.getString("flag");
-        this.uncertainty = resultSet.getDouble("uncertainty");
-        this.year = resultSet.getString("year");
-        this.source = resultSet.getString("source");
-        this.info = resultSet.getString("info");
-        this.indice = Flag.getFlag(flag);
-        
-    }
-    
-    public IndicateurResponse (Indicateur indicateur, DataResult dataResult) {
-        this.code = indicateur.getCode();
-        this.libelle = indicateur.getLibelle();
-        this.unit = indicateur.getUnit();
-        this.value = round(dataResult.value);
-        this.flag = dataResult.flag;
-        this.uncertainty = dataResult.uncertainty;
-        this.year = dataResult.time;
-        this.source = dataResult.source;
-        this.info = dataResult.info;
-        this.indice = Flag.getFlag(flag);
-    }
-    
     /* ----- SETTERS ----- */
 
     public void setValue(Double value) {
@@ -176,9 +150,9 @@ public class IndicateurResponse {
     
     /* ----- UTILS ----- */
     
-    private static Double round(Double value) {
+    private static Double round(Double value,Integer precision) {
         BigDecimal bd = BigDecimal.valueOf(value);
-        bd = bd.setScale(2,RoundingMode.FLOOR);
+        bd = bd.setScale(precision,RoundingMode.FLOOR);
         return bd.doubleValue();
     }
     

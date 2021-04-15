@@ -11,13 +11,21 @@ package meta;
  */
 public enum Flag {
     
-    PUBLISHED("p","Valeur déclarée",true,true),
-    REPORTED ("r","Valeur obtenue à partir de données publiées",false,true),
-    ESTIMATED ("e","Valeur estimée à partir de données publiées",false,true),
-    ADJUSTED ("a","Valeur statistique ajustée",false,true),
-    STATISTIC ("s","Valeur statistique",false,false),
-    DEFAULT ("d","Valeur par défaut",false,false),
-    NOT_APPLICABLE ("n","Non applicable",false,false);
+    // Valeurs déclarées/publiées
+    PUBLICATION("p","Valeur déclarée",true,true),
+    PUBLIC_REPORTING ("r","Valeur publique",false,true),
+    
+    // Valeurs ajustées
+    SIMPLIFIED_PUBLICATION("h","Valeur déclarée sur valeur ajoutée",true,true),
+    ESTIMATION ("e","Valeur estimée",false,true),
+    ADJUSTED_DATA("a","Valeur ajustée",false,true),
+    
+    // Valeurs par defaut
+    SECTOR_SPECIFIC_DATA("s","Valeur sectorielle",false,false),
+    DEFAULT_DATA("d","Valeur par défaut",false,false),
+    
+    // Valeur non applicable
+    NOT_APPLICABLE("n","Non applicable",false,false);
         
     private Flag (String code, String libelle, Boolean isDeclared, Boolean isAdjusted) {
         this.code = code;
@@ -53,21 +61,23 @@ public enum Flag {
         
         switch (flag) {
             case "p" :
-                return PUBLISHED;
+                return PUBLICATION;
+            case "h" :
+                return SIMPLIFIED_PUBLICATION;
             case "r" :
-                return REPORTED;
+                return PUBLIC_REPORTING;
             case "e" :
-                return ESTIMATED;
+                return ESTIMATION;
             case "a" :
-                return ADJUSTED;
+                return ADJUSTED_DATA;
             case "s" :
-                return STATISTIC;
+                return SECTOR_SPECIFIC_DATA;
             case "d" :
-                return DEFAULT;
+                return DEFAULT_DATA;
             case "n" :
                 return NOT_APPLICABLE;
             default:
-                return DEFAULT;
+                return DEFAULT_DATA;
         }
         
     }
