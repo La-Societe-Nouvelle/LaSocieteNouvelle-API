@@ -49,7 +49,6 @@ public class EmpreinteSocietaleBuilder {
         HashMap<String,IndicateurResponse> empreinteSocietaleReference = buildEmpreinteSocietaleUniteLegale("FRA",uniteLegale.getActivitePrincipale().substring(0,2));
         
         for (Indicateur indicateur : Indicateur.values()) {
-            System.out.println(" -> "+indicateur.getCode());
             // Try to get the value from the database (specific value for the legal unit)
             IndicateurResponse indicateurResponse = new IndicateurResponse(connection, indicateur, uniteLegale);
                         
@@ -70,7 +69,6 @@ public class EmpreinteSocietaleBuilder {
             }
             
         }
-        System.out.println("done");
         return empreinteSocietale;
     }
     
@@ -155,7 +153,7 @@ public class EmpreinteSocietaleBuilder {
                     + "WHERE siren = '"+uniteLegale.getSiren()+"' "
                     + "AND codePaysEtrangerEtablissement != '' "
                     + "AND etatAdministratifEtablissement = 'A';");
-            eco_nva = nbEtablissementsEtranger/nbEtablissements *100;
+            eco_nva = (nbEtablissements-nbEtablissementsEtranger)/nbEtablissements *100;
         }
         
         // Calculate the value
@@ -164,7 +162,6 @@ public class EmpreinteSocietaleBuilder {
         Double maxValue = (NVA_rate.value/100)*min(eco_nva*1.5,100.0) + (1-(NVA_rate.value/100)-(IMP_rate.value/100))*min(eco_fra.value*(1+eco_fra.uncertainty/100),100.0) ;
         Double minValue = (NVA_rate.value/100)*max(eco_nva*0.5,0.0)   + (1-(NVA_rate.value/100)-(IMP_rate.value/100))*max(eco_fra.value*(1-eco_fra.uncertainty/100),0.0) ;
         Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
-        
         return new IndicateurResponse(
                 Indicateur.ECO,
                 value,
