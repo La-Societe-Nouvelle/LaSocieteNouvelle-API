@@ -26,10 +26,10 @@ public class DefaultDataResponse implements Serializable {
     public DefaultDataResponse (DatabaseConnection connection,String pays,String activite) {
         
         header = new HeaderResponse();
-        if (pays==null) pays = "WLD";
+        if (pays==null) pays = "_DV";
         if (activite==null) activite = "00";
         
-        if (pays.matches("[A-Z]{3}") & activite.matches("[0-9]{2}")) {
+        if ((pays.matches("[A-Z]{3}") | pays.matches("_DV")) & activite.matches("[0-9]{2}")) {
             try {
                 empreinteSocietale = new EmpreinteSocietale(connection, pays, activite);
                 header.setStatut(Statut.OK);

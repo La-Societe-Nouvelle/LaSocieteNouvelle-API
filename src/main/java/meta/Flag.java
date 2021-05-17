@@ -1,43 +1,56 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* API - La Société Nouvelle
+ * Licence : OpenSource - Réutilisation libre
  */
+
 package meta;
 
-/**
- *
- * @author SylvainPro
+/** FLAG ENUM
+ * ----------------------------------------------------------------------------------------------------
+ * Decription : flag to inform about the origin of the values
+ * ----------------------------------------------------------------------------------------------------
+ * @author Sylvain HUMILIERE | La Société Nouvelle
  */
+
 public enum Flag {
     
+    // VARIABLE             CODE    LABEL                                   DECLARED    ADJUSTED
+    // ------------------------------------------------------------------------------------------
+    
     // Valeurs déclarées/publiées
-    PUBLICATION("p","Valeur déclarée",true,true),
-    PUBLIC_REPORTING ("r","Valeur publique",false,true),
+    PUBLICATION(            "p",    "Valeur déclarée",                      true,       true),
+    PUBLIC_REPORTING(       "r",    "Valeur publique",                      false,      true),
     
     // Valeurs ajustées
-    SIMPLIFIED_PUBLICATION("h","Valeur déclarée sur valeur ajoutée",true,true),
-    ESTIMATION ("e","Valeur estimée",false,true),
-    ADJUSTED_DATA("a","Valeur ajustée",false,true),
+    SIMPLIFIED_PUBLICATION( "h",    "Valeur déclarée sur valeur ajoutée",   true,       true),
+    ESTIMATION(             "e",    "Valeur estimée",                       false,      true),
+    ADJUSTED_DATA(          "a",    "Valeur ajustée",                       false,      true),
     
     // Valeurs par defaut
-    SECTOR_SPECIFIC_DATA("s","Valeur sectorielle",false,false),
-    DEFAULT_DATA("d","Valeur par défaut",false,false),
+    SECTOR_SPECIFIC_DATA(   "s",    "Valeur sectorielle",                   false,      false),
+    DEFAULT_DATA(           "d",    "Valeur par défaut",                    false,      false),
     
     // Valeur non applicable
-    NOT_APPLICABLE("n","Non applicable",false,false);
+    NOT_APPLICABLE(         "n",    "Non applicable",                       false,      false);
+    
+    // ------------------------------------------------------------------------------------------
         
+    /* ---------- Attributs ---------- */
+    
+    private final String code;
+    private final String libelle;
+    private final Boolean isDeclared;   // specified if the value is declared by the company
+    private final Boolean isAdjusted;   // specified if the value is adjusted or if a default one
+    
+    /* ---------- Constructor ---------- */
+    
     private Flag (String code, String libelle, Boolean isDeclared, Boolean isAdjusted) {
         this.code = code;
         this.libelle = libelle;
         this.isDeclared = isDeclared;
         this.isAdjusted = isAdjusted;
     }
-        
-    private final String code;
-    private final String libelle;
-    private final Boolean isDeclared;
-    private final Boolean isAdjusted;
+
+    /* ---------- Getters ---------- */
     
     public String getCode () {
         return this.code;
@@ -55,11 +68,12 @@ public enum Flag {
         return isAdjusted;
     }
     
-    /* ----- AUTRES ----- */
+    /* ---------- retrieve Flag object from char ---------- */
     
     public static Flag getFlag (String flag) {
         
-        switch (flag) {
+        switch (flag) 
+        {
             case "p" :
                 return PUBLICATION;
             case "h" :
@@ -79,7 +93,6 @@ public enum Flag {
             default:
                 return DEFAULT_DATA;
         }
-        
     }
     
 }

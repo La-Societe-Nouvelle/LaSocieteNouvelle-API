@@ -6,7 +6,6 @@
 package data;
 
 import meta.Indicateur;
-import meta.Flag;
 import response.UniteLegaleResponse;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -153,53 +152,62 @@ public class DataAccess {
     
     /* ----- DONNEES PAR DEFAUT ----- */
     
-    public static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur, String geo, String nace) throws SQLException {
-        if (nace!=null & geo!=null) {
+    public static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur, String geo, String nace, String flow) throws SQLException {
+        if (nace!=null & geo!=null & flow!=null) 
+        {
             String query = "SELECT * "
                 + "FROM echo.defaultData "
-                + "WHERE indic = '"+indicateur.getCode()+"' AND geo = '"+geo+"' AND nace = '"+nace+"' "
+                + "WHERE indic = '"+indicateur.getCode()+"' AND geo = '"+geo+"' AND nace = '"+nace+"' AND flow = '"+flow+"' "
                     //+ "AND unit = '"+indicateur.getUnit()+"' "
                 + "ORDER BY year DESC;";
+            
             ResultSet resultSet = connection.executeQuery(query);
-            if (resultSet.next()) {
+            
+            if (resultSet.next()) 
+            {
                 DataResult result = new DataResult(resultSet);
                 return result;
-            } else {
-                return getDefaultData(connection, indicateur, geo);
-            }
-        } else if (geo!=null) {
-            return getDefaultData(connection, indicateur, geo);
-        } else {
-            return getDefaultData(connection, indicateur);
-        }
+            } 
+            else { return getDefaultData(connection, indicateur, geo, flow); }
+        } 
+        else if (geo!=null) { return getDefaultData(connection, indicateur, geo, flow); } 
+        else { return getDefaultData(connection, indicateur); }
     }
-    private static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur, String geo) throws SQLException {
+    
+    private static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur, String geo, String flow) throws SQLException {
+        
         String query = "SELECT * "
             + "FROM echo.defaultData "
-            + "WHERE indic = '"+indicateur.getCode()+"' AND geo = '"+geo+"' AND nace = '00' "
+            + "WHERE indic = '"+indicateur.getCode()+"' AND geo = '"+geo+"' AND nace = '00' AND flow = '"+flow+"' "
                 //+ "AND unit = '"+indicateur.getUnit()+"' "
             + "ORDER BY year DESC;";
+        
         ResultSet resultSet = connection.executeQuery(query);
-        if (resultSet.next()) {
+        
+        if (resultSet.next()) 
+        {
             DataResult result = new DataResult(resultSet);
             return result;
-        } else {
-            return getDefaultData(connection, indicateur);
-        }
+        } 
+        else { return getDefaultData(connection, indicateur); }
     }
+    
     private static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur) throws SQLException {
+        
         String query = "SELECT * "
             + "FROM echo.defaultData "
-            + "WHERE indic = '"+indicateur.getCode()+"' AND geo = 'WLD' AND nace = '00' "
+            + "WHERE indic = '"+indicateur.getCode()+"' AND geo = '_DV' AND nace = '00' AND flow = 'GAP' "
                 //+ "AND unit = '"+indicateur.getUnit()+"' "
             + "ORDER BY year DESC;";
+        
         ResultSet resultSet = connection.executeQuery(query);
-        if (resultSet.next()) {
+        
+        if (resultSet.next()) 
+        {
             DataResult result = new DataResult(resultSet);
             return result;
-        } else {
-            return null;
-        }
+        } 
+        else { return null; }
     }
     
     /* ----- DATA RESULT ----- */

@@ -1,18 +1,24 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* API - La Société Nouvelle
+ * Licence : OpenSource - Réutilisation libre
  */
+
 package meta;
 
-/**
- *
- * @author SylvainPro
+/** IDENTIFIANT ENUM (not used yet)
+ * ----------------------------------------------------------------------------------------------------
+ * Decription : type of indifiant used
+ * Type available :
+ *      - siren (default)
+ *      - siret
+ *      - numéro TVA
+ * ----------------------------------------------------------------------------------------------------
+ * @author Sylvain HUMILIERE | La Société Nouvelle
  */
+
 public enum Identifiant {
     
     siren,
     siret,
-    geo
+    tva;
     
 }

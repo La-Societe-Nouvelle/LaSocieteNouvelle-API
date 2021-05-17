@@ -1,7 +1,5 @@
-/*
- * API - La Société Nouvelle
- * Licence : OpenSource - Réutilisation avec modification à des fins commercciales autorisée
- * 
+/* API - La Société Nouvelle
+ * Licence : OpenSource - Réutilisation libre
  */
 
 package service;
@@ -22,7 +20,9 @@ import response.DefaultDataResponse;
 
 /**  API - LA SOCIETE NOUVELLE | FACADE REST
 --------------------------------------------------------------------------------------------------------
-Request to check if the server is on
+Version : 2.0
+Services :
+   /siren/{siren}
 --------------------------------------------------------------------------------------------------------
 @author Sylvain HUMILIERE
  */
@@ -48,11 +48,12 @@ public class ApiFacadeREST {
         return true;
     }
         
-    /* SERVICE - REQUETE SIMPLE
+    /* SERVICE - BASIC REQUEST
     ----------------------------------------------------------------------------------------------------
-    Requête : obtention de l'empreinte sociétale d'une unité légale
+    Description : get Social Footprint of a company
     ----------------------------------------------------------------------------------------------------
     */
+    
     @GET
     @Path("/siren/{siren}")
     @Produces({MediaType.APPLICATION_JSON})

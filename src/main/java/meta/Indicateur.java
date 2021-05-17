@@ -1,45 +1,57 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* API - La Société Nouvelle
+ * Licence : OpenSource - Réutilisation libre
  */
+
 package meta;
 
+// Imports
 import java.util.ArrayList;
 
-/**
- *
- * @author SylvainPro
+/** INDIC ENUM
+ * ----------------------------------------------------------------------------------------------------
+ * Decription : indicators used in the social footprint or available in the database
+ * ----------------------------------------------------------------------------------------------------
+ * @author Sylvain HUMILIERE | La Société Nouvelle
  */
+
 public enum Indicateur {
     
-    /* --- INDICATEURS ESE --- */
-    ECO ("ECO","Contribution à l'Economie nationale",                                               "%",        true,   +5,     1),
-    ART ("ART","Contribution aux Métiers d'Art et aux Savoir-Faire",                                "%",        true,   +2,     1),
-    SOC ("SOC","Contribution aux Acteurs d'Intérêt social",                                         "%",        true,   +3,     1),
-    KNW ("KNW","Contribution à l'Evolution des Connaissances et des Compétences",                   "%",        true,   +2,     1),
-    DIS ("DIS","Indice de répartition des revenus",                                                 "/100",     true,   -2,     1),
-    GEQ ("GEQ","Indice d'Ecart des rémunérations entre les Femmes et les Hommes",                   "%",        true,   -3,     1),
-    GHG ("GHG","Intensité d'Emission de Gaz à Effet de Serre",                                      "gCO2e/€",  true,   -5,     0),
-    MAT ("MAT","Intensité d'Extraction de Matières premières",                                      "g/€",      true,   -3,     0),
-    WAS ("WAS","Intensité de Production de Déchets",                                                "g/€",      true,   -4,     0),
-    NRG ("NRG","Intensité de Consommation d'Energie",                                               "kJ/€",     true,   -4,     0),
-    WAT ("WAT","Intensité de Consommation d'Eau",                                                   "L/€",      true,   -3,     1),
-    HAZ ("HAZ","Intensité d'Utilisation de produits dangereux pour la Santé et l'Environnement",    "g/€",      true,   -2,     1),
+    //      CODE    LABEL                                                                               UNIT        CSF     COEF    ROUNDING
+    // --------------------------------------------------------------------------------------------------------------------------------------
     
-    /* --- AUTRES INDICATEURS --- */
-    IEP ("IEP","Index de l'Egalité professionnelle Femmes-Hommes",                                  "/100",     false,  +1,     0),
+    // CSF INDICATORS
+    ECO(    "ECO",  "Contribution à l'Economie nationale",                                              "%",        true,   +5,     1),
+    ART(    "ART",  "Contribution aux Métiers d'Art et aux Savoir-Faire",                               "%",        true,   +2,     1),
+    SOC(    "SOC",  "Contribution aux Acteurs d'Intérêt social",                                        "%",        true,   +3,     1),
+    KNW(    "KNW",  "Contribution à l'Evolution des Connaissances et des Compétences",                  "%",        true,   +2,     1),
+    DIS(    "DIS",  "Indice de répartition des revenus",                                                "/100",     true,   -2,     1),
+    GEQ(    "GEQ",  "Indice d'Ecart des rémunérations entre les Femmes et les Hommes",                  "%",        true,   -3,     1),
+    GHG(    "GHG",  "Intensité d'Emission de Gaz à Effet de Serre",                                     "gCO2e/€",  true,   -5,     0),
+    MAT(    "MAT",  "Intensité d'Extraction de Matières premières",                                     "g/€",      true,   -3,     0),
+    WAS(    "WAS",  "Intensité de Production de Déchets",                                               "g/€",      true,   -4,     0),
+    NRG(    "NRG",  "Intensité de Consommation d'Energie",                                              "kJ/€",     true,   -4,     0),
+    WAT(    "WAT",  "Intensité de Consommation d'Eau",                                                  "L/€",      true,   -3,     1),
+    HAZ(    "HAZ",  "Intensité d'Utilisation de produits dangereux pour la Santé et l'Environnement",   "g/€",      true,   -2,     1),
     
-    /* --- DONNEES COMPLEMENTAIRES DISPONIBLES --- */
-    NVA ("NVA","Taux de Valeur Ajoutée Nette",                                                      "%",        false,  null,   1),
-    IMP ("IMP","Taux d'Importations",                                                               "%",        false,  null,   1);
+    // OTHERS INDICATORS
+    IEP (   "IEP",  "Index de l'Egalité professionnelle Femmes-Hommes",                                  "/100",     false,  +1,     0),
+    
+    // ADDITIONAL DATA
+    NVA (   "NVA",  "Taux de Valeur Ajoutée Nette",                                                      "%",        false,  null,   1),
+    IMP (   "IMP",  "Taux d'Importations",                                                               "%",        false,  null,   1);
         
+    // --------------------------------------------------------------------------------------------------------------------------------------
+
+    /* ---------- Attributs ---------- */
+    
     private final String code;
     private final String libelle;
     private final String unit;
     private final Boolean iqve;
     private final Integer coef;
     private final Integer precision;
+    
+    /* ---------- Constructor ---------- */
     
     private Indicateur (String code, String libelle, String unit, Boolean iqve,Integer coef,Integer precision) {
         this.code = code;
@@ -50,6 +62,8 @@ public enum Indicateur {
         this.precision = precision;
     }
         
+    /* ---------- Getters ---------- */
+    
     public String getCode () {
         return this.code;
     }
@@ -74,42 +88,38 @@ public enum Indicateur {
         return precision;
     }
 
-    /* ----- AUTRES ----- */
+    /* ---------- Retrieve Indic object from code ---------- */
     
     public static Indicateur getIndicateur(String indic) {
         
-        switch (indic) {
-            case "ECO" :
-                return ECO;
-            case "ART" :
-                return ART;
-            case "SOC" :
-                return SOC;
-            case "KNW" :
-                return KNW;
-            case "DIS" :
-                return DIS;
-            case "GEQ" :
-                return GEQ;
-            case "GHG" :
-                return GHG;
-            case "MAT" :
-                return MAT;
-            case "WAS" :
-                return WAS;
-            case "NRG" :
-                return NRG;
-            case "WAT" :
-                return WAT;
-            case "HAZ" :
-                return HAZ;
-            case "IEP" :
-                return IEP;
-            default:
-                return ECO;
+        switch (indic) 
+        {
+            // CSF indicators
+            case "ART" : return ART;
+            case "DIS" : return DIS;
+            case "ECO" : return ECO;
+            case "GEQ" : return GEQ;
+            case "GHG" : return GHG;
+            case "HAZ" : return HAZ;
+            case "KNW" : return KNW;
+            case "MAT" : return MAT;
+            case "NRG" : return NRG;
+            case "SOC" : return SOC;
+            case "WAS" : return WAS;
+            case "WAT" : return WAT;
+            // others indicators
+            case "IEP" : return IEP;
+            // additional data
+            case "NVA" : return NVA;
+            case "IMP" : return IMP;
+            // default
+            default: return null;
         }
-        
     }
+    
+    /* ---------- List IQVE* ---------- */
+    // IQVE : Economic Value Quality Indicator (Indicateur de Qualité de la Valeur Economique) i.e in CSF
+    
     public static ArrayList<Indicateur> getListIQVE() {
         ArrayList<Indicateur> listIQVE = new ArrayList<>();
         for (Indicateur indicateur : Indicateur.values()) {
