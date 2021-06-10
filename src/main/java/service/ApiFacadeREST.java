@@ -100,9 +100,10 @@ public class ApiFacadeREST {
     @Produces({MediaType.APPLICATION_JSON})
     public DefaultDataResponse findProfilSocialDefault (
             @QueryParam("pays") String pays,
-            @QueryParam("activite") String activite) {
+            @QueryParam("activite") String activite,
+            @QueryParam("flow") String flow) {
         DatabaseConnection connection = new DatabaseConnection();
-        DefaultDataResponse response = new DefaultDataResponse(connection,pays,activite);
+        DefaultDataResponse response = new DefaultDataResponse(connection, pays, activite, flow);
         connection.close();
         return response;
     }

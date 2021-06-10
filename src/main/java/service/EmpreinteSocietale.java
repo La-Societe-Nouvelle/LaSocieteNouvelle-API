@@ -25,7 +25,7 @@ public class EmpreinteSocietale {
     /* ---------- Constructors ---------- */
     
     // Basic constructor
-    public EmpreinteSocietale(DatabaseConnection connection,UniteLegaleResponse uniteLegale) throws SQLException {
+    public EmpreinteSocietale(DatabaseConnection connection, UniteLegaleResponse uniteLegale) throws SQLException {
         
         // Initialize the builder
         EmpreinteSocietaleBuilder builder = new EmpreinteSocietaleBuilder(connection);
@@ -40,14 +40,14 @@ public class EmpreinteSocietale {
     }
     
     // Constructor used to get default data (macroeconomic scale)
-    public EmpreinteSocietale(DatabaseConnection connection, String pays, String nace) throws SQLException {
+    public EmpreinteSocietale(DatabaseConnection connection, String pays, String nace, String flow) throws SQLException {
         
         // Initialize the builder
         EmpreinteSocietaleBuilder builder = new EmpreinteSocietaleBuilder(connection);
         
         // Build the indicators
         try  {
-            indicateurs = builder.buildEmpreinteSocietaleUniteLegale(pays, nace);
+            indicateurs = builder.buildEmpreinteSocietaleUniteLegale(pays, nace, flow);
         } catch (NullPointerException ex) {
             indicateurs = null;
             Logger.getLogger(EmpreinteSocietale.class.getName()).log(Level.SEVERE, null, ex);

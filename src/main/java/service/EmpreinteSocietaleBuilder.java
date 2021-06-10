@@ -46,7 +46,7 @@ public class EmpreinteSocietaleBuilder {
         // Initialize the set of indicators
         HashMap<String,IndicateurResponse> empreinteSocietale = new HashMap<>();
         // Build the comparatives values
-        HashMap<String,IndicateurResponse> empreinteSocietaleReference = buildEmpreinteSocietaleUniteLegale("FRA",uniteLegale.getActivitePrincipale().substring(0,2));
+        HashMap<String,IndicateurResponse> empreinteSocietaleReference = buildEmpreinteSocietaleUniteLegale("FRA",uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
         
         for (Indicateur indicateur : Indicateur.values()) {
             // Try to get the value from the database (specific value for the legal unit)
@@ -69,11 +69,12 @@ public class EmpreinteSocietaleBuilder {
             }
             
         }
+        
         return empreinteSocietale;
     }
     
     // Build a default social footprint based on the country and the main activity
-    public HashMap<String,IndicateurResponse> buildEmpreinteSocietaleUniteLegale(String pays, String nace) throws SQLException {
+    public HashMap<String,IndicateurResponse> buildEmpreinteSocietaleUniteLegale(String pays, String nace, String flow) throws SQLException {
         
         // Initialize the set of indicators
         HashMap<String,IndicateurResponse> empreinteSocietale = new HashMap<>();
@@ -84,7 +85,7 @@ public class EmpreinteSocietaleBuilder {
             if (indicateur.isIqve()) {
                 
                 // Get the data from the database
-                DataResult rs = DataAccess.getDefaultData(connection, indicateur, pays, nace, "GDP");
+                DataResult rs = DataAccess.getDefaultData(connection, indicateur, pays, nace, flow);
                 
                 // Build the indicator response
                 IndicateurResponse indicateurResponse = new IndicateurResponse(
