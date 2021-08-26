@@ -24,16 +24,27 @@ public class EmpreinteSocietale {
     
     /* ---------- Constructors ---------- */
     
+    /*  NOTES
+    ----------------------------------------------------------------------------------------------------
+    Two constructors are used :
+     - one for the corporates footprints
+     - one for the default data
+    The difference is in the called function of the builder
+    ----------------------------------------------------------------------------------------------------
+     */
+    
     // Basic constructor
-    public EmpreinteSocietale(DatabaseConnection connection, UniteLegaleResponse uniteLegale) throws SQLException {
-        
+    public EmpreinteSocietale(DatabaseConnection connection, UniteLegaleResponse uniteLegale) throws SQLException 
+    {
         // Initialize the builder
         EmpreinteSocietaleBuilder builder = new EmpreinteSocietaleBuilder(connection);
         
-        // Build the indicators
-        try  {
+        // Build the indicators (from legal unit data)
+        try  
+        {
             indicateurs = builder.buildEmpreinteSocietaleUniteLegale(uniteLegale);
-        } catch (NullPointerException ex) {
+        } 
+        catch (NullPointerException ex) {
             indicateurs = null;
             Logger.getLogger(EmpreinteSocietale.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -45,10 +56,12 @@ public class EmpreinteSocietale {
         // Initialize the builder
         EmpreinteSocietaleBuilder builder = new EmpreinteSocietaleBuilder(connection);
         
-        // Build the indicators
-        try  {
+        // Build the indicators (from country, activity, flow)
+        try  
+        {
             indicateurs = builder.buildEmpreinteSocietaleUniteLegale(pays, nace, flow);
-        } catch (NullPointerException ex) {
+        } 
+        catch (NullPointerException ex) {
             indicateurs = null;
             Logger.getLogger(EmpreinteSocietale.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -56,7 +69,8 @@ public class EmpreinteSocietale {
     
     /* ---------- Getters ---------- */
     
-    public HashMap<String,IndicateurResponse> getEmpreinteSocietaleResponse() {
+    public HashMap<String,IndicateurResponse> getEmpreinteSocietaleResponse() 
+    {
             return indicateurs;
     }
     

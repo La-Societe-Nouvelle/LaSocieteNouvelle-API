@@ -28,7 +28,8 @@ public class DataAccess {
      
     /* ----- UNITE LEGALE ----- */
     
-    public static ResultSet getUniteLegaleData(DatabaseConnection connection,String siren) throws SQLException {
+    public static ResultSet getUniteLegaleData(DatabaseConnection connection,String siren) throws SQLException 
+    {
         String query = 
                 "SELECT uniteLegale.*, "
                     + "etablissement.codePostalEtablissement, "
@@ -41,12 +42,15 @@ public class DataAccess {
                     + "ON activitePrincipale.code = uniteLegale.activitePrincipaleUniteLegale "
                 + "WHERE uniteLegale.siren = '" + siren + "' "
                     + "AND uniteLegale.statutDiffusionUniteLegale = 'O';";
+        
         ResultSet resultSet = connection.executeQuery(query);
         return resultSet;
     }
     
-    public static ResultSet getUnitesLegalesDenominationLike (DatabaseConnection connection, String denomination) throws SQLException {
+    public static ResultSet getUnitesLegalesDenominationLike (DatabaseConnection connection, String denomination) throws SQLException 
+    {
         String recherche = Normalizer.normalize(denomination,Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]","").replace("'","''").toUpperCase();
+        
         String query = 
                 "SELECT uniteLegale.*,etablissement.*, activitePrincipale.libelle AS activitePrincipaleLibelle "
                 + "FROM sirene.unitesLegales uniteLegale "
@@ -63,12 +67,15 @@ public class DataAccess {
                     + "AND uniteLegale.statutDiffusionUniteLegale = 'O' "
                     + "AND uniteLegale.etatAdministratifUniteLegale = 'A' "
                 + "LIMIT 10000;";
+        
         ResultSet resultSet = connection.executeQuery(query);
         return resultSet;
     }
-    public static ResultSet getUnitesLegalesDenominationSimilarTo (DatabaseConnection connection, String denomination) throws SQLException {
+    public static ResultSet getUnitesLegalesDenominationSimilarTo (DatabaseConnection connection, String denomination) throws SQLException 
+    {
         String recherche = Normalizer.normalize(denomination,Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").replace("'","''").toUpperCase();
         //String recherchePartitionnee = recherche.replace("[^a-zA-Z0-9]","%");
+        
         String query = 
                 "SELECT uniteLegale.*,etablissement.*, activitePrincipale.libelle AS activitePrincipaleLibelle "
                 + "FROM sirene.unitesLegales uniteLegale "
@@ -89,13 +96,15 @@ public class DataAccess {
                         + "OR uniteLegale.categorieJuridiqueUniteLegale LIKE '31%' "
                     + ") "
                 + "LIMIT 10000;";
+        
         ResultSet resultSet = connection.executeQuery(query);
         return resultSet;
     }
 
     /* ----- RECHERCHE MULTICRITERES ----- */
 
-    public static ResultSet getListUnitesLegales(DatabaseConnection connection, String activite,String region,String departement) throws SQLException{
+    public static ResultSet getListUnitesLegales(DatabaseConnection connection, String activite,String region,String departement) throws SQLException
+    {
         String query = 
                 "SELECT uniteLegale.*,etablissement.*, activitePrincipale.libelle AS activitePrincipaleLibelle "
                 + "FROM sirene.unitesLegales uniteLegale "
@@ -128,20 +137,23 @@ public class DataAccess {
         query = query
                     + "AND uniteLegale.siren IN (SELECT DISTINCT(siren) FROM donnees.unitesLegales) "
                 + "LIMIT 1000;";
-        //execution
+        
         ResultSet resultSet = connection.executeQuery(query);
         return resultSet;
     }
     
     /* ----- DONNEES PAR DEFAUT ----- */
     
-    public static DataResult getIndicateurData(DatabaseConnection connection, Indicateur indicateur, UniteLegaleResponse uniteLegaleResponse) throws SQLException {
+    public static DataResult getIndicateurData(DatabaseConnection connection, Indicateur indicateur, UniteLegaleResponse uniteLegaleResponse) throws SQLException 
+    {
         String query = "SELECT * "
                 + "FROM donnees.unitesLegales donnee "
                 + "WHERE donnee.siren = '"+uniteLegaleResponse.getSiren()+"' "
                     + "AND indic = '"+indicateur.getCode()+"' "
                 + "ORDER BY donnee.year DESC;";
+        
         ResultSet resultSet = connection.executeQuery(query);
+        
         if (resultSet.next()) {
             DataResult result = new DataResult(resultSet);
             return result;
@@ -152,13 +164,13 @@ public class DataAccess {
     
     /* ----- DONNEES PAR DEFAUT ----- */
     
-    public static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur, String geo, String nace, String flow) throws SQLException {
+    public static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur, String geo, String nace, String flow) throws SQLException 
+    {
         if (nace!=null & geo!=null & flow!=null) 
         {
             String query = "SELECT * "
                 + "FROM echo.defaultData "
                 + "WHERE indic = '"+indicateur.getCode()+"' AND geo = '"+geo+"' AND nace = '"+nace+"' AND flow = '"+flow+"' "
-                    //+ "AND unit = '"+indicateur.getUnit()+"' "
                 + "ORDER BY year DESC;";
             
             ResultSet resultSet = connection.executeQuery(query);
@@ -168,18 +180,27 @@ public class DataAccess {
                 DataResult result = new DataResult(resultSet);
                 return result;
             } 
-            else { return getDefaultData(connection, indicateur, geo, flow); }
+            else 
+            { 
+                // PRD, IC, GAP -> GAP & GVA -> GDP
+                flow = flow.equals("GVA") ? "GDP" : "GAP";
+                return getDefaultData(connection, indicateur, geo, flow); 
+            }
         } 
-        else if (geo!=null) { return getDefaultData(connection, indicateur, geo, flow); } 
+        else if (geo!=null) 
+        { 
+            // PRD, IC, GAP, null -> GAP & GVA -> GDP
+            flow = flow!=null && flow.equals("GVA") ? "GDP" : "GAP";
+            return getDefaultData(connection, indicateur, geo, flow); 
+        } 
         else { return getDefaultData(connection, indicateur); }
     }
     
-    private static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur, String geo, String flow) throws SQLException {
-        
+    private static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur, String geo, String flow) throws SQLException 
+    {
         String query = "SELECT * "
             + "FROM echo.defaultData "
             + "WHERE indic = '"+indicateur.getCode()+"' AND geo = '"+geo+"' AND nace = '00' AND flow = '"+flow+"' "
-                //+ "AND unit = '"+indicateur.getUnit()+"' "
             + "ORDER BY year DESC;";
         
         ResultSet resultSet = connection.executeQuery(query);

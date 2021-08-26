@@ -22,6 +22,7 @@ import response.UniteLegaleResponse;
  *
  * @author SylvainPro
  */
+
 public class EmpreinteSocietaleBuilder {
     
     private final DatabaseConnection connection;
@@ -30,60 +31,62 @@ public class EmpreinteSocietaleBuilder {
     
     /* ---------- Constructor ---------- */
     
-    public EmpreinteSocietaleBuilder(DatabaseConnection connection) {
-        // Set the connection to the database
+    public EmpreinteSocietaleBuilder(DatabaseConnection connection) 
+    {
+        // Set the databse connection
         this.connection = connection;
     }
     
     /* ---------- CSF Builders ---------- */
     
     // Build the CSF of a legal unit
-    public HashMap<String,IndicateurResponse> buildEmpreinteSocietaleUniteLegale(UniteLegaleResponse uniteLegale) throws SQLException {
-        
+    public HashMap<String,IndicateurResponse> buildEmpreinteSocietaleUniteLegale(UniteLegaleResponse uniteLegale) throws SQLException 
+    {
         // Set the legal unit for further references
         this.uniteLegale = uniteLegale;
         
         // Initialize the set of indicators
         HashMap<String,IndicateurResponse> empreinteSocietale = new HashMap<>();
-        // Build the comparatives values
-        HashMap<String,IndicateurResponse> empreinteSocietaleReference = buildEmpreinteSocietaleUniteLegale("FRA",uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
         
-        for (Indicateur indicateur : Indicateur.values()) {
+        // Build the comparatives values
+        HashMap<String,IndicateurResponse> empreinteSocietaleReference = buildEmpreinteSocietaleUniteLegale("FRA",uniteLegale.getActivitePrincipale().substring(0,2), "PRD");
+        
+        for (Indicateur indicateur : Indicateur.values()) 
+        {
             // Try to get the value from the database (specific value for the legal unit)
             IndicateurResponse indicateurResponse = new IndicateurResponse(connection, indicateur, uniteLegale);
                         
             // Calculate the default value if there is no value published & the indicator is include in the CSF
-            if (indicateurResponse.getValue()==null & indicateur.isIqve()) {
+            if (indicateurResponse.getValue()==null & indicateur.isIqve()) 
+            {
                 indicateurResponse = getDefaultIndicateurResponse(indicateur);
             }
             
             // Set the comparative value for the CSF indicators (for which a comparative value is available)
-            if (indicateur.isIqve()) {
+            if (indicateur.isIqve()) 
+            {
                 indicateurResponse.setReference(empreinteSocietaleReference.get(indicateur.getCode()));
                 empreinteSocietale.put(indicateur.getCode(),indicateurResponse);
             }
             
             // Put the indicator in the corporate social footprint
-            if (indicateurResponse.getValue()!=null) {
-                empreinteSocietale.put(indicateur.getCode(),indicateurResponse);
-            }
-            
+            if (indicateurResponse.getValue()!=null) empreinteSocietale.put(indicateur.getCode(),indicateurResponse);
         }
         
         return empreinteSocietale;
     }
     
     // Build a default social footprint based on the country and the main activity
-    public HashMap<String,IndicateurResponse> buildEmpreinteSocietaleUniteLegale(String pays, String nace, String flow) throws SQLException {
-        
+    public HashMap<String,IndicateurResponse> buildEmpreinteSocietaleUniteLegale(String pays, String nace, String flow) throws SQLException 
+    {
         // Initialize the set of indicators
         HashMap<String,IndicateurResponse> empreinteSocietale = new HashMap<>();
         
-        for (Indicateur indicateur : Indicateur.values()) {
-            
+        for (Indicateur indicateur : Indicateur.values()) 
+        {
             // only get the value for CSF indicators
-            if (indicateur.isIqve()) {
-                
+            if (indicateur.isIqve()) 
+            {
                 // Get the data from the database
                 DataResult rs = DataAccess.getDefaultData(connection, indicateur, pays, nace, flow);
                 
@@ -91,8 +94,8 @@ public class EmpreinteSocietaleBuilder {
                 IndicateurResponse indicateurResponse = new IndicateurResponse(
                         indicateur,
                         rs.value,
-                        rs.flag,rs.uncertainty,
-                        rs.time,rs.source,"");
+                        rs.flag, rs.uncertainty,
+                        rs.time, rs.source, "");
                 
                 empreinteSocietale.put(indicateur.getCode(),indicateurResponse);
             }
@@ -103,12 +106,14 @@ public class EmpreinteSocietaleBuilder {
     /* ---------- Indicators Builders ---------- */
     
     // Redirect to the correct function for each indicator
-    private IndicateurResponse getDefaultIndicateurResponse(Indicateur indicateur) throws SQLException {
-        switch (indicateur) {
-            case ECO:
-                return getDefaultECO();
+    private IndicateurResponse getDefaultIndicateurResponse(Indicateur indicateur) throws SQLException 
+    {
+        switch (indicateur) 
+        {
             case ART:
                 return getDefaultART();
+            case ECO:
+                return getDefaultECO();
             case SOC:
                 return getDefaultSOC();
             case KNW:
@@ -132,6 +137,44 @@ public class EmpreinteSocietaleBuilder {
             default:
                 return null;
         }
+    }
+    
+    // Calculate the default data for the indicator ART
+    private IndicateurResponse getDefaultART() throws SQLException 
+    {
+        // Get the net value added rate (in relation to the production)
+        DataResult NVA_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
+        
+        // Get the default data at the national level
+        DataResult art_ic = DataAccess.getDefaultData(connection, Indicateur.ART, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "IC");
+        
+        // Estimate the value of the indicator for the net value added based on the localisation of the sites
+        Double art_nva = 0.0;
+        Double nbEtablissements = getValue("SELECT COUNT(*) AS value FROM sirene.etablissements "
+                + "WHERE siren = '"+uniteLegale.getSiren()+"' "
+                + "AND etatAdministratifEtablissement = 'A' AND statutDiffusionEtablissement = 'O';");
+        if (nbEtablissements>0) {
+            Double nbEtablissementsRegistreMetiers = getValue("SELECT COUNT(*) AS value FROM sirene.etablissements "
+                    + "WHERE siren = '"+uniteLegale.getSiren()+"' "
+                    + "AND activitePrincipaleRegistreMetiersEtablissement != '' "
+                    + "AND etatAdministratifEtablissement = 'A' AND statutDiffusionEtablissement = 'O';");
+            art_nva = nbEtablissementsRegistreMetiers/nbEtablissements *100;
+        }
+        
+        // Calculate the value
+        Double value = (NVA_rate.value/100)*art_nva + (1-(NVA_rate.value/100))*art_ic.value;
+        // Calculate the uncertainty
+        Double maxValue = (NVA_rate.value/100)*min(art_nva*1.5,100.0) + (1-(NVA_rate.value/100))*min(art_ic.value*(1+art_ic.uncertainty/100),100.0) ;
+        Double minValue = (NVA_rate.value/100)*max(art_nva*0.5,0.0)   + (1-(NVA_rate.value/100))*max(art_ic.value*(1-art_ic.uncertainty/100),0.0) ;
+        Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
+        
+        return new IndicateurResponse(Indicateur.ART,
+            value,
+            Flag.ADJUSTED_DATA.getCode(),
+            uncertainty,
+            art_ic.time,
+            art_ic.source+",SIRENE",
+            "");
     }
     
     // Calculate the default data for the indicator ECO
@@ -168,41 +211,6 @@ public class EmpreinteSocietaleBuilder {
                 value,
                 eco_fra.flag,uncertainty,
                 eco_fra.time,eco_fra.source,eco_fra.info);
-    }
-    
-    // Calculate the default data for the indicator ART
-    private IndicateurResponse getDefaultART() throws SQLException {
-        
-        // Get the net value added rate (in relation to the production)
-        DataResult NVA_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
-        // Get the default data at the national level
-        DataResult art_fra = DataAccess.getDefaultData(connection, Indicateur.ART, "FRA", "00", "GDP");
-        
-        // Estimate the value of the indicator for the net value added based on the localisation of the sites
-        Double art_nva = 0.0;
-        Double nbEtablissements = getValue("SELECT COUNT(*) AS value FROM sirene.etablissements "
-                + "WHERE siren = '"+uniteLegale.getSiren()+"' "
-                + "AND etatAdministratifEtablissement = 'A' AND statutDiffusionEtablissement = 'O';");
-        if (nbEtablissements>0) {
-            Double nbEtablissementsRegistreMetiers = getValue("SELECT COUNT(*) AS value FROM sirene.etablissements "
-                    + "WHERE siren = '"+uniteLegale.getSiren()+"' "
-                    + "AND activitePrincipaleRegistreMetiersEtablissement != '' "
-                    + "AND etatAdministratifEtablissement = 'A' AND statutDiffusionEtablissement = 'O';");
-            art_nva = nbEtablissementsRegistreMetiers/nbEtablissements *100;
-        }
-        
-        // Calculate the value
-        Double value = (NVA_rate.value/100)*art_nva + (1-(NVA_rate.value/100))*art_fra.value;
-        // Calculate the uncertainty
-        Double maxValue = (NVA_rate.value/100)*min(art_nva*1.5,100.0) + (1-(NVA_rate.value/100))*min(art_fra.value*(1+art_fra.uncertainty/100),100.0) ;
-        Double minValue = (NVA_rate.value/100)*max(art_nva*0.5,0.0)   + (1-(NVA_rate.value/100))*max(art_fra.value*(1-art_fra.uncertainty/100),0.0) ;
-        Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
-        
-        return new IndicateurResponse(
-                Indicateur.ART,
-                value,
-                Flag.ADJUSTED_DATA.getCode(),uncertainty,
-                art_fra.time,art_fra.source+",SIRENE","");
     }
     
     // Calculate the default data for the indicator SOC
