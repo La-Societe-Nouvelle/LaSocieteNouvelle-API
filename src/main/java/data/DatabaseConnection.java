@@ -31,13 +31,15 @@ public class DatabaseConnection {
     
     /* ---------- Constructor ---------- */
     
-    public DatabaseConnection() {
+    public DatabaseConnection() 
+    {
         connection = getConnection();
         sendQueryPoint();
     }
     
     // Initialize the connection to the database
-    private static Connection getConnection() {
+    private static Connection getConnection() 
+    {
         try {
             Context ctx = new InitialContext();
             DataSource ds = (DataSource)ctx.lookup("java:comp/env/jdbc/postgres");
@@ -49,12 +51,15 @@ public class DatabaseConnection {
         }
     }
     
-    private void sendQueryPoint() {
+    private void sendQueryPoint() 
+    {
         SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat formatterTime = new SimpleDateFormat("HH:mm:ss");  
         Date date = new Date();  
+        
         String query = "INSERT INTO stats.queryPoints (queryDate,queryTime) VALUES "
                 + "('"+formatterDate.format(date)+"','"+formatterTime.format(date)+"');";
+        
         try {
             statement = connection.createStatement();
             statement.execute(query);
@@ -66,7 +71,8 @@ public class DatabaseConnection {
     /* ---------- execution ---------- */
     
     // Execute the query and return the resultset - SELECT
-    public ResultSet executeQuery(String query) throws SQLException {
+    public ResultSet executeQuery(String query) throws SQLException 
+    {
         statement = connection.createStatement();
         resultSet = statement.executeQuery(query);
         return resultSet;
@@ -75,7 +81,8 @@ public class DatabaseConnection {
     /* ---------- close ---------- */
     
     // Close the connection to the database
-    public void close() {
+    public void close() 
+    {
         try {
             connection.close();
         } catch (SQLException ex) {

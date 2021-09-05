@@ -91,11 +91,13 @@ public class EmpreinteSocietaleBuilder {
                 DataResult rs = DataAccess.getDefaultData(connection, indicateur, pays, nace, flow);
                 
                 // Build the indicator response
-                IndicateurResponse indicateurResponse = new IndicateurResponse(
-                        indicateur,
-                        rs.value,
-                        rs.flag, rs.uncertainty,
-                        rs.time, rs.source, "");
+                IndicateurResponse indicateurResponse = new IndicateurResponse(indicateur,
+                    rs.value,
+                    rs.flag,
+                    rs.uncertainty,
+                    rs.time, 
+                    rs.source,
+                    "");
                 
                 empreinteSocietale.put(indicateur.getCode(),indicateurResponse);
             }
@@ -112,28 +114,28 @@ public class EmpreinteSocietaleBuilder {
         {
             case ART:
                 return getDefaultART();
-            case ECO:
-                return getDefaultECO();
-            case SOC:
-                return getDefaultSOC();
-            case KNW:
-                return getDefaultKNW();
             case DIS:
                 return getDefaultDIS();
+            case ECO:
+                return getDefaultECO();
             case GEQ:
                 return getDefaultGEQ();
             case GHG:
                 return getDefaultGHG();
-            case MAT:
-                return getDefaultMAT();
-            case WAS:
-                return getDefaultWAS();
-            case NRG:
-                return getDefaultNRG();
-            case WAT:
-                return getDefaultWAT();
             case HAZ:
                 return getDefaultHAZ();
+            case NRG:
+                return getDefaultNRG();
+            case KNW:
+                return getDefaultKNW();
+            case MAT:
+                return getDefaultMAT();
+            case SOC:
+                return getDefaultSOC();
+            case WAS:
+                return getDefaultWAS();
+            case WAT:
+                return getDefaultWAT();
             default:
                 return null;
         }
@@ -142,30 +144,35 @@ public class EmpreinteSocietaleBuilder {
     // Calculate the default data for the indicator ART
     private IndicateurResponse getDefaultART() throws SQLException 
     {
-        // Get the net value added rate (in relation to the production)
-        DataResult NVA_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
+        // Retrieve the net value added rate (according to the economic division)
+        DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
         
-        // Get the default data at the national level
+        // Retrieve the default value for intermediate consumption (according to the economic division)
         DataResult art_ic = DataAccess.getDefaultData(connection, Indicateur.ART, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "IC");
         
-        // Estimate the value of the indicator for the net value added based on the localisation of the sites
+        // Estimate the value for the net value added based on the activities of the establishments
         Double art_nva = 0.0;
-        Double nbEtablissements = getValue("SELECT COUNT(*) AS value FROM sirene.etablissements "
-                + "WHERE siren = '"+uniteLegale.getSiren()+"' "
-                + "AND etatAdministratifEtablissement = 'A' AND statutDiffusionEtablissement = 'O';");
-        if (nbEtablissements>0) {
-            Double nbEtablissementsRegistreMetiers = getValue("SELECT COUNT(*) AS value FROM sirene.etablissements "
+        Double nbEtablissements = getValue("SELECT COUNT(*) AS value "
+            + "FROM sirene.etablissements "
+            + "WHERE siren = '"+uniteLegale.getSiren()+"' "
+                + "AND etatAdministratifEtablissement = 'A' "
+                + "AND statutDiffusionEtablissement = 'O';");
+        if (nbEtablissements > 0) 
+        {
+            Double nbEtablissementsRegistreMetiers = getValue("SELECT COUNT(*) AS value "
+                    + "FROM sirene.etablissements "
                     + "WHERE siren = '"+uniteLegale.getSiren()+"' "
-                    + "AND activitePrincipaleRegistreMetiersEtablissement != '' "
-                    + "AND etatAdministratifEtablissement = 'A' AND statutDiffusionEtablissement = 'O';");
+                        + "AND activitePrincipaleRegistreMetiersEtablissement != '' "
+                        + "AND etatAdministratifEtablissement = 'A' "
+                        + "AND statutDiffusionEtablissement = 'O';");
             art_nva = nbEtablissementsRegistreMetiers/nbEtablissements *100;
         }
         
         // Calculate the value
-        Double value = (NVA_rate.value/100)*art_nva + (1-(NVA_rate.value/100))*art_ic.value;
+        Double value = (nva_rate.value/100)*art_nva + (1-(nva_rate.value/100))*art_ic.value;
         // Calculate the uncertainty
-        Double maxValue = (NVA_rate.value/100)*min(art_nva*1.5,100.0) + (1-(NVA_rate.value/100))*min(art_ic.value*(1+art_ic.uncertainty/100),100.0) ;
-        Double minValue = (NVA_rate.value/100)*max(art_nva*0.5,0.0)   + (1-(NVA_rate.value/100))*max(art_ic.value*(1-art_ic.uncertainty/100),0.0) ;
+        Double maxValue = (nva_rate.value/100)*min(art_nva*1.5,100.0) + (1-(nva_rate.value/100))*min(art_ic.value*(1+art_ic.uncertainty/100),100.0) ;
+        Double minValue = (nva_rate.value/100)*max(art_nva*0.5,0.0)   + (1-(nva_rate.value/100))*max(art_ic.value*(1-art_ic.uncertainty/100),0.0) ;
         Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
         
         return new IndicateurResponse(Indicateur.ART,
@@ -173,278 +180,313 @@ public class EmpreinteSocietaleBuilder {
             Flag.ADJUSTED_DATA.getCode(),
             uncertainty,
             art_ic.time,
-            art_ic.source+",SIRENE",
+            art_ic.source+", SIRENE",
             "");
     }
     
+    // Calculate the default data for the indicator DIS
+    private IndicateurResponse getDefaultDIS() throws SQLException 
+    {
+        // If the legal unit don't have more than one employee
+        if (uniteLegale.getTrancheEffectifs()==null 
+         || uniteLegale.getTrancheEffectifs().equals("0") 
+         || uniteLegale.getTrancheEffectifs().equals("1")) 
+        {
+            // Retrieve the net value added rate (according to the economic division)
+            DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
+            // Retrieve the default value for intermediate consumption (according to the economic division)
+            DataResult dis_ic = DataAccess.getDefaultData(connection, Indicateur.DIS, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "IC");
+            
+            // Calculate the value
+            Double value = (nva_rate.value/100)*0.0 + (1-(nva_rate.value/100))*dis_ic.value;
+            // Calculate the uncertainty
+            Double maxValue = (nva_rate.value/100)*25.0 + (1-(nva_rate.value/100))*min(dis_ic.value*(1+dis_ic.uncertainty/100),100.0) ;
+            Double minValue = (nva_rate.value/100)*00.0 + (1-(nva_rate.value/100))*max(dis_ic.value*(1-dis_ic.uncertainty/100),0.0) ;
+            Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
+                        
+            return new IndicateurResponse(Indicateur.DIS,
+                value,
+                Flag.ADJUSTED_DATA.getCode(),
+                uncertainty,
+                dis_ic.time,
+                dis_ic.source+", SIRENE",
+                "");
+        } 
+        // If the legal unit have more than one employee
+        else 
+        {
+            // Retrieve the default value for production (according to the economic division)
+            DataResult rs = DataAccess.getDefaultData(connection, Indicateur.DIS, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "PRD");
+            
+            return new IndicateurResponse(Indicateur.DIS,
+                rs.value,
+                rs.flag,
+                rs.uncertainty,
+                rs.time,
+                rs.source,
+                "");
+        }
+    }
+    
     // Calculate the default data for the indicator ECO
-    private IndicateurResponse getDefaultECO() throws SQLException {
+    private IndicateurResponse getDefaultECO() throws SQLException 
+    {
+        // Retrieve the net value added rate (according to the economic division)
+        DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
+        // Retrieve the default value for intermediate consumption (according to the economic division)
+        DataResult eco_ci = DataAccess.getDefaultData(connection, Indicateur.ECO, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "IC");
         
-        // Get the net value added rate (in relation to the production)
-        DataResult NVA_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
-        // Get the net value added rate (in relation to the production)
-        DataResult IMP_rate = DataAccess.getDefaultData(connection, Indicateur.IMP, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
-        // Get the default data at the national level
-        DataResult eco_fra = DataAccess.getDefaultData(connection, Indicateur.ECO, "FRA", "00", "GDP");
-        
-        // Estimate the net value added in France
+        // Estimate the net value added produced in France
         Double eco_nva = 100.0;
-        Double nbEtablissements = getValue("SELECT COUNT(*) AS value FROM sirene.etablissements "
+        Double nbEtablissements = getValue("SELECT COUNT(*) AS value "
+                + "FROM sirene.etablissements "
                 + "WHERE siren = '"+uniteLegale.getSiren()+"' "
-                + "AND etatAdministratifEtablissement = 'A';");
-        if (nbEtablissements>0) {
-            Double nbEtablissementsEtranger = getValue("SELECT COUNT(*) AS value FROM sirene.etablissements "
-                    + "WHERE siren = '"+uniteLegale.getSiren()+"' "
-                    + "AND codePaysEtrangerEtablissement != '' "
                     + "AND etatAdministratifEtablissement = 'A';");
+        if (nbEtablissements>0) {
+            Double nbEtablissementsEtranger = getValue("SELECT COUNT(*) AS value "
+                    + "FROM sirene.etablissements "
+                    + "WHERE siren = '"+uniteLegale.getSiren()+"' "
+                        + "AND codePaysEtrangerEtablissement != '' "
+                        + "AND etatAdministratifEtablissement = 'A';");
             eco_nva = (nbEtablissements-nbEtablissementsEtranger)/nbEtablissements *100;
         }
         
         // Calculate the value
-        Double value = (NVA_rate.value/100)*eco_nva + (1-(NVA_rate.value/100)-(IMP_rate.value/100))*eco_fra.value;
+        Double value = (nva_rate.value/100)*eco_nva + (1-(nva_rate.value/100))*eco_ci.value;
         // Calculate the uncertainty
-        Double maxValue = (NVA_rate.value/100)*min(eco_nva*1.5,100.0) + (1-(NVA_rate.value/100)-(IMP_rate.value/100))*min(eco_fra.value*(1+eco_fra.uncertainty/100),100.0) ;
-        Double minValue = (NVA_rate.value/100)*max(eco_nva*0.5,0.0)   + (1-(NVA_rate.value/100)-(IMP_rate.value/100))*max(eco_fra.value*(1-eco_fra.uncertainty/100),0.0) ;
+        Double maxValue = (nva_rate.value/100)*min(eco_nva*1.5,100.0) + (1-(nva_rate.value/100))*min(eco_ci.value*(1+eco_ci.uncertainty/100),100.0) ;
+        Double minValue = (nva_rate.value/100)*max(eco_nva*0.5,0.0)   + (1-(nva_rate.value/100))*max(eco_ci.value*(1-eco_ci.uncertainty/100),0.0) ;
         Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
-        return new IndicateurResponse(
-                Indicateur.ECO,
-                value,
-                eco_fra.flag,uncertainty,
-                eco_fra.time,eco_fra.source,eco_fra.info);
-    }
-    
-    // Calculate the default data for the indicator SOC
-    private IndicateurResponse getDefaultSOC() throws SQLException {
         
-        // Get the net value added rate (in relation to the production)
-        DataResult NVA_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
-        // Get the default data at the national level
-        DataResult soc_fra = DataAccess.getDefaultData(connection, Indicateur.SOC, "FRA", "00", "GDP");
-        
-        // If the legal unit belong to the social economy (based on SIRENE)
-        if (uniteLegale.getIsEconomieSocialeSolidaire()) {
-            
-            // Calculate the value
-            Double value = (NVA_rate.value/100)*100.0 + (1-(NVA_rate.value/100))*soc_fra.value;
-            // Calculate the uncertainty
-            Double maxValue = (NVA_rate.value/100)*100.0*1.00 + (1-(NVA_rate.value/100))*min(soc_fra.value*(1+soc_fra.uncertainty/100),100.0) ;
-            Double minValue = (NVA_rate.value/100)*100.0*0.75 + (1-(NVA_rate.value/100))*max(soc_fra.value*(1-soc_fra.uncertainty/100),0.0) ;
-            Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
-            
-            return new IndicateurResponse(
-                    Indicateur.SOC,
-                    value,
-                    Flag.ADJUSTED_DATA.getCode(),uncertainty,
-                    soc_fra.time,soc_fra.source+", SIRENE","");
-            
-        } else {
-            
-            // Calculate the value
-            Double value = (NVA_rate.value/100)*0.0 + (1-(NVA_rate.value/100))*soc_fra.value;
-            // Calculate the uncertainty
-            Double maxValue = (NVA_rate.value/100)*25.0 + (1-(NVA_rate.value/100))*min(soc_fra.value*(1+soc_fra.uncertainty/100),100.0) ;
-            Double minValue = (NVA_rate.value/100)*00.0 + (1-(NVA_rate.value/100))*max(soc_fra.value*(1-soc_fra.uncertainty/100),0.0) ;
-            Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
-            
-            return new IndicateurResponse(
-                    Indicateur.SOC,
-                    value,
-                    Flag.ADJUSTED_DATA.getCode(),uncertainty,
-                    soc_fra.time,soc_fra.source+", SIRENE","");
-        }
-    }
-    
-    // Calculate the default data for the indicator KNW
-    private IndicateurResponse getDefaultKNW() throws SQLException {
-        
-        // If the legal unit main activity is equivalent to research or education
-        if (uniteLegale.getActivitePrincipale().substring(0,2).equals("72") 
-                || uniteLegale.getActivitePrincipale().substring(0,2).equals("85")) {
-            
-            // Get the net value added rate (in relation to the production)
-            DataResult NVA_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
-            // Get the default data at the national level
-            DataResult knw_fra = DataAccess.getDefaultData(connection, Indicateur.KNW, "FRA", "00", "GDP");
-            
-            // Calculate the value
-            Double value = (NVA_rate.value/100)*100.0 + (1-(NVA_rate.value/100))*knw_fra.value;
-            // Calculate the uncertainty
-            Double maxValue = (NVA_rate.value/100)*100.0*1.00 + (NVA_rate.value/100)*min(knw_fra.value*(1+knw_fra.uncertainty/100),100.0) ;
-            Double minValue = (NVA_rate.value/100)*100.0*0.75 + (NVA_rate.value/100)*max(knw_fra.value*(1-knw_fra.uncertainty/100),0.0) ;
-            Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
-            
-            return new IndicateurResponse(
-                    Indicateur.KNW,
-                    value,
-                    Flag.SECTOR_SPECIFIC_DATA.getCode(),uncertainty,
-                    knw_fra.time,knw_fra.source+", SIRENE","");
-        } else {
-            
-            // Get the default data assigned to the economic division of the legal unit
-            DataResult rs = DataAccess.getDefaultData(connection, Indicateur.KNW, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "GDP");
-            
-            return new IndicateurResponse(
-                    Indicateur.KNW,
-                    rs.value,
-                    Flag.DEFAULT_DATA.getCode(),rs.uncertainty,
-                    rs.time,rs.source+",SIRENE","");
-        }
-    }
-    
-    // Calculate the default data for the indicator DIS
-    private IndicateurResponse getDefaultDIS() throws SQLException {
-        
-        // If the legal unit don't have more than one employee
-        if (uniteLegale.getTrancheEffectifs()==null 
-                || uniteLegale.getTrancheEffectifs().equals("0") 
-                || uniteLegale.getTrancheEffectifs().equals("1")) {
-            
-            // Get the net value added rate (in relation to the production)
-            DataResult NVA_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
-            // Get the default data at the national level
-            DataResult dis_fra = DataAccess.getDefaultData(connection, Indicateur.DIS, "FRA", "00", "GDP");
-            
-            // Calculate the value
-            Double value = (NVA_rate.value/100)*0.0 + (1-(NVA_rate.value/100))*dis_fra.value;
-            // Calculate the uncertainty
-            Double maxValue = (NVA_rate.value/100)*25.0 + (1-(NVA_rate.value/100))*min(dis_fra.value*(1+dis_fra.uncertainty/100),100.0) ;
-            Double minValue = (NVA_rate.value/100)*00.0 + (1-(NVA_rate.value/100))*max(dis_fra.value*(1-dis_fra.uncertainty/100),0.0) ;
-            Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
-                        
-            return new IndicateurResponse(
-                    Indicateur.DIS,
-                    value,
-                    Flag.ADJUSTED_DATA.getCode(),uncertainty,
-                    dis_fra.time,dis_fra.source+", SIRENE","");
-        
-        } else {
-            
-            // Get the default data assigned to the economic division of the legal unit
-            DataResult rs = DataAccess.getDefaultData(connection, Indicateur.DIS, "FRA", "00", "GDP");
-            
-            return new IndicateurResponse(
-                    Indicateur.DIS,
-                    rs.value,
-                    rs.flag,rs.uncertainty,
-                    rs.time,rs.source,"");
-        }
+        return new IndicateurResponse(Indicateur.ECO,
+            value,
+            Flag.ADJUSTED_DATA.getCode(),
+            uncertainty,
+            eco_ci.time,
+            eco_ci.source+", SIRENE",
+            eco_ci.info);
     }
     
     // Calculate the default data for the indicator GEQ
-    private IndicateurResponse getDefaultGEQ() throws SQLException {
-        
+    private IndicateurResponse getDefaultGEQ() throws SQLException 
+    {
         // If the legal unit don't have more than one employee
         if (uniteLegale.getTrancheEffectifs()==null 
-                || uniteLegale.getTrancheEffectifs().equals("0") 
-                || uniteLegale.getTrancheEffectifs().equals("1")) {
-            
-            // Get the net value added rate (in relation to the production)
-            DataResult NVA_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
-            // Get the default data at the national level
-            DataResult geq_fra = DataAccess.getDefaultData(connection, Indicateur.GEQ, "FRA", "00", "GDP");
+         || uniteLegale.getTrancheEffectifs().equals("0") 
+         || uniteLegale.getTrancheEffectifs().equals("1")) 
+        {
+            // Retrieve the net value added rate (according to the economic division)
+            DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
+            // Retrieve the default value for intermediate consumption (according to the economic division)
+            DataResult geq_ic = DataAccess.getDefaultData(connection, Indicateur.GEQ, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "IC");
             
             // Calculate the value
-            Double value = (NVA_rate.value/100)*0.0 + (1-(NVA_rate.value/100))*geq_fra.value;
+            Double value = (nva_rate.value/100)*0.0 + (1-(nva_rate.value/100))*geq_ic.value;
             // Calculate the uncertainty
-            Double maxValue = (NVA_rate.value/100)*25.0 + (1-(NVA_rate.value/100))*min(geq_fra.value*(1+geq_fra.uncertainty/100),100.0) ;
-            Double minValue = (NVA_rate.value/100)*00.0 + (1-(NVA_rate.value/100))*max(geq_fra.value*(1-geq_fra.uncertainty/100),0.0) ;
+            Double maxValue = (nva_rate.value/100)*25.0 + (1-(nva_rate.value/100))*min(geq_ic.value*(1+geq_ic.uncertainty/100),100.0) ;
+            Double minValue = (nva_rate.value/100)*00.0 + (1-(nva_rate.value/100))*max(geq_ic.value*(1-geq_ic.uncertainty/100),0.0) ;
             Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
             
-            return new IndicateurResponse(
-                    Indicateur.GEQ,
-                    value,
-                    Flag.ADJUSTED_DATA.getCode(),uncertainty,
-                    geq_fra.time,geq_fra.source+", SIRENE","");
+            return new IndicateurResponse(Indicateur.GEQ,
+                value,
+                Flag.ADJUSTED_DATA.getCode(),
+                uncertainty,
+                geq_ic.time,
+                geq_ic.source+", SIRENE",
+                "");
+        }
+        // If the legal unit have more than one employee
+        else 
+        {
+            // Retrieve the default value for production (according to the economic division)
+            DataResult rs = DataAccess.getDefaultData(connection, Indicateur.GEQ, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "PRD");
             
-        } else {
-            
-            // Get the default data assigned to the economic division of the legal unit
-            DataResult rs = DataAccess.getDefaultData(connection, Indicateur.GEQ, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "GDP");
-            
-            return new IndicateurResponse(
-                    Indicateur.GEQ,
-                    rs.value,
-                    rs.flag,rs.uncertainty,
-                    rs.time,rs.source,"");
+            return new IndicateurResponse(Indicateur.GEQ,
+                rs.value,
+                rs.flag,
+                rs.uncertainty,
+                rs.time,
+                rs.source+", SIRENE",
+                "");
         }
     }
     
     // Calculate the default data for the indicator GHG
-    private IndicateurResponse getDefaultGHG() throws SQLException {
+    private IndicateurResponse getDefaultGHG() throws SQLException 
+    {
+        // Retrieve the default value for production (according to the economic division)
+        DataResult rs = DataAccess.getDefaultData(connection, Indicateur.GHG, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "PRD");
         
-        // Get the default data assigned to the economic division of the legal unit
-        DataResult rs = DataAccess.getDefaultData(connection, Indicateur.GHG, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "GDP");
-        
-        return new IndicateurResponse(
-                Indicateur.GHG,
-                rs.value,
-                rs.flag,rs.uncertainty,
-                rs.time,rs.source,"");
-    }
-    
-    // Calculate the default data for the indicator MAT
-    private IndicateurResponse getDefaultMAT() throws SQLException {
-        
-        // Get the default data assigned to the economic division of the legal unit
-        DataResult rs = DataAccess.getDefaultData(connection, Indicateur.MAT, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "GDP");
-        
-        return new IndicateurResponse(
-                Indicateur.MAT,
-                rs.value,
-                rs.flag,rs.uncertainty,
-                rs.time,rs.source,"");
-    }
-    
-    // Calculate the default data for the indicator WAS
-    private IndicateurResponse getDefaultWAS() throws SQLException {
-        
-        // Get the default data assigned to the economic division of the legal unit
-        DataResult rs = DataAccess.getDefaultData(connection, Indicateur.WAS, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "GDP");
-        
-        return new IndicateurResponse(
-                Indicateur.WAS,
-                rs.value,
-                rs.flag,rs.uncertainty,
-                rs.time,rs.source,"");
-    }
-    
-    // Calculate the default data for the indicator NRG
-    private IndicateurResponse getDefaultNRG() throws SQLException {
-        
-        // Get the default data assigned to the economic division of the legal unit
-        DataResult rs = DataAccess.getDefaultData(connection, Indicateur.NRG, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "GDP");
-        
-        return new IndicateurResponse(
-                Indicateur.NRG,
-                rs.value,
-                rs.flag,rs.uncertainty,
-                rs.time,rs.source,"");
-    }
-    
-    // Calculate the default data for the indicator WAT
-    private IndicateurResponse getDefaultWAT() throws SQLException {
-        
-        // Get the default data assigned to the economic division of the legal unit
-        DataResult rs = DataAccess.getDefaultData(connection, Indicateur.WAT, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "GDP");
-        
-        return new IndicateurResponse(
-                Indicateur.WAT,
-                rs.value,
-                rs.flag,rs.uncertainty,
-                rs.time,rs.source,"");
+        return new IndicateurResponse(Indicateur.GHG,
+            rs.value,
+            rs.flag,
+            rs.uncertainty,
+            rs.time,
+            rs.source,
+            "");
     }
     
     // Calculate the default data for the indicator HAZ
-    private IndicateurResponse getDefaultHAZ() throws SQLException {
+    private IndicateurResponse getDefaultHAZ() throws SQLException 
+    {
+        // Retrieve the default value for production (according to the economic division)
+        DataResult rs = DataAccess.getDefaultData(connection, Indicateur.HAZ, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "PRD");
         
-        // Get the default data at national level (no detailed values available)
-        DataResult rs = DataAccess.getDefaultData(connection, Indicateur.HAZ, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "GDP");
-        
-        return new IndicateurResponse(
-                Indicateur.HAZ,
-                rs.value,
-                rs.flag,rs.uncertainty,
-                rs.time,rs.source,"");
+        return new IndicateurResponse(Indicateur.HAZ,
+            rs.value,
+            rs.flag,
+            rs.uncertainty,
+            rs.time,
+            rs.source,
+            "");
     }
+    
+    // Calculate the default data for the indicator KNW
+    private IndicateurResponse getDefaultKNW() throws SQLException 
+    {
+        // If the legal unit main activity is research or education
+        if (uniteLegale.getActivitePrincipale().substring(0,2).equals("72") 
+         || uniteLegale.getActivitePrincipale().substring(0,2).equals("85"))
+        {
+            // Retrieve the net value added rate (according to the economic division)
+            DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
+            // Retrieve the default value for intermediate consumption (according to the economic division)
+            DataResult knw_ic = DataAccess.getDefaultData(connection, Indicateur.KNW, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "IC");
+            
+            // Calculate the value
+            Double value = (nva_rate.value/100)*100.0 + (1-(nva_rate.value/100))*knw_ic.value;
+            // Calculate the uncertainty
+            Double maxValue = (nva_rate.value/100)*100.0*1.00 + (nva_rate.value/100)*min(knw_ic.value*(1+knw_ic.uncertainty/100),100.0) ;
+            Double minValue = (nva_rate.value/100)*100.0*0.75 + (nva_rate.value/100)*max(knw_ic.value*(1-knw_ic.uncertainty/100),0.0) ;
+            Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
+            
+            return new IndicateurResponse(Indicateur.KNW,
+                value,
+                Flag.SECTOR_SPECIFIC_DATA.getCode(),
+                uncertainty,
+                knw_ic.time,
+                knw_ic.source+", SIRENE",
+                "");
+        }
+        // for others activities
+        else 
+        {
+            // Retrieve the default value for production (according to the economic division)
+            DataResult rs = DataAccess.getDefaultData(connection, Indicateur.KNW, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "PRD");
+            
+            return new IndicateurResponse(Indicateur.KNW,
+                rs.value,
+                Flag.DEFAULT_DATA.getCode(),
+                rs.uncertainty,
+                rs.time,
+                rs.source+",SIRENE",
+                "");
+        }
+    }
+    
+    // Calculate the default data for the indicator MAT
+    private IndicateurResponse getDefaultMAT() throws SQLException 
+    {
+        // Retrieve the default value for production (according to the economic division)
+        DataResult rs = DataAccess.getDefaultData(connection, Indicateur.MAT, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "PRD");
         
+        return new IndicateurResponse(Indicateur.MAT,
+            rs.value,
+            rs.flag,
+            rs.uncertainty,
+            rs.time,
+            rs.source,
+            "");
+    }
+    
+    // Calculate the default data for the indicator NRG
+    private IndicateurResponse getDefaultNRG() throws SQLException 
+    {
+        // Retrieve the default value for production (according to the economic division)
+        DataResult rs = DataAccess.getDefaultData(connection, Indicateur.NRG, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "PRD");
+        
+        return new IndicateurResponse(Indicateur.NRG,
+            rs.value,
+            rs.flag,
+            rs.uncertainty,
+            rs.time,
+            rs.source,
+            "");
+    }
+    
+    // Calculate the default data for the indicator SOC
+    private IndicateurResponse getDefaultSOC() throws SQLException 
+    {
+        // Retrieve the net value added rate (according to the economic division)
+        DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
+        // Retrieve the default value for intermediate consumption (according to the economic division)
+        DataResult soc_ic = DataAccess.getDefaultData(connection, Indicateur.SOC, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "IC");
+        
+        // If the legal unit belong to the social economy (based on SIRENE)
+        if (uniteLegale.getIsEconomieSocialeSolidaire()) 
+        {
+            // Calculate the value
+            Double value = (nva_rate.value/100)*100.0 + (1-(nva_rate.value/100))*soc_ic.value;
+            // Calculate the uncertainty
+            Double maxValue = (nva_rate.value/100)*100.0*1.00 + (1-(nva_rate.value/100))*min(soc_ic.value*(1+soc_ic.uncertainty/100),100.0) ;
+            Double minValue = (nva_rate.value/100)*100.0*0.75 + (1-(nva_rate.value/100))*max(soc_ic.value*(1-soc_ic.uncertainty/100),0.0) ;
+            Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
+            
+            return new IndicateurResponse(Indicateur.SOC,
+                value,
+                Flag.ADJUSTED_DATA.getCode(),
+                uncertainty,
+                soc_ic.time,
+                soc_ic.source+", SIRENE",
+                "");
+        } 
+        else 
+        {
+            // Calculate the value
+            Double value = (nva_rate.value/100)*0.0 + (1-(nva_rate.value/100))*soc_ic.value;
+            // Calculate the uncertainty
+            Double maxValue = (nva_rate.value/100)*25.0 + (1-(nva_rate.value/100))*min(soc_ic.value*(1+soc_ic.uncertainty/100),100.0) ;
+            Double minValue = (nva_rate.value/100)*00.0 + (1-(nva_rate.value/100))*max(soc_ic.value*(1-soc_ic.uncertainty/100),0.0) ;
+            Double uncertainty = max(maxValue-value,value-minValue)/value *100.0;
+            
+            return new IndicateurResponse(Indicateur.SOC,
+                value,
+                Flag.ADJUSTED_DATA.getCode(),
+                uncertainty,
+                soc_ic.time,
+                soc_ic.source+", SIRENE",
+                "");
+        }
+    }
+    
+    // Calculate the default data for the indicator WAS
+    private IndicateurResponse getDefaultWAS() throws SQLException 
+    {
+        // Retrieve the default value for production (according to the economic division)
+        DataResult rs = DataAccess.getDefaultData(connection, Indicateur.WAS, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "PRD");
+        
+        return new IndicateurResponse(Indicateur.WAS,
+            rs.value,
+            rs.flag,
+            rs.uncertainty,
+            rs.time,
+            rs.source,
+            "");
+    }
+    
+    // Calculate the default data for the indicator WAT
+    private IndicateurResponse getDefaultWAT() throws SQLException 
+    {
+        // Retrieve the default value for production (according to the economic division)
+        DataResult rs = DataAccess.getDefaultData(connection, Indicateur.WAT, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "GDP");
+        
+        return new IndicateurResponse(Indicateur.WAT,
+            rs.value,
+            rs.flag,
+            rs.uncertainty,
+            rs.time,
+            rs.source,
+            "");
+    }
+    
 }
