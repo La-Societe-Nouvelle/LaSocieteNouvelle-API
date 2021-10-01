@@ -28,7 +28,7 @@ public class DataAccess {
      
     /* ----- UNITE LEGALE ----- */
     
-    public static ResultSet getUniteLegaleData(DatabaseConnection connection,String siren) throws SQLException 
+    public static ResultSet getUniteLegaleData(DatabaseConnection connection, String siren) throws SQLException 
     {
         String query = 
                 "SELECT uniteLegale.*, "
@@ -42,6 +42,36 @@ public class DataAccess {
                     + "ON activitePrincipale.code = uniteLegale.activitePrincipaleUniteLegale "
                 + "WHERE uniteLegale.siren = '" + siren + "' "
                     + "AND uniteLegale.statutDiffusionUniteLegale = 'O';";
+        
+        ResultSet resultSet = connection.executeQuery(query);
+        return resultSet;
+    }
+    
+    public static ResultSet getEtablissementsData(DatabaseConnection connection, String siren) throws SQLException
+    {
+        String query =
+                "SELECT "
+                // isActivitesArtisanales
+                    + "ROUND(SUM( "
+                        + "CASE "
+                            + "WHEN LENGTH(etablissement.activitePrincipaleRegistreMetiersEtablissement) > 0 THEN 1 "
+                            + "ELSE 0 "
+                        + "END) / SUM(1) * 100) = 100 "
+                    + "AS isActivitesArtisanales, "
+                // isLocalisationEtranger
+                    + "ROUND(SUM( "
+                        + "CASE "
+                            + "WHEN etablissement.codePaysEtrangerEtablissement LIKE '99%' THEN 1 "
+                            + "ELSE 0 "
+                        + "END)) >  0 "
+                    + "AS isLocalisationEtranger "
+                // etablissements
+                + "FROM sirene.etablissements etablissement "
+                + "WHERE etablissement.siren = '" + siren + "' "
+                    + "AND etablissement.statutDiffusionEtablissement = 'O' "
+                    + "AND etablissement.etatAdministratifEtablissement = 'A';";
+        
+        System.out.println(query);
         
         ResultSet resultSet = connection.executeQuery(query);
         return resultSet;

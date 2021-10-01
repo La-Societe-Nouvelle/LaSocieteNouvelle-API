@@ -70,8 +70,8 @@ public class DataSort {
             }
         // Comparaison - tranche effectifs
         } else if (!uniteLegale1.getTrancheEffectifs().equals(uniteLegale2.getTrancheEffectifs())) {
-            Integer trancheEffectifs1 = uniteLegale1.isEmployeur() ? Integer.parseInt(uniteLegale1.getTrancheEffectifs()) : 0;
-            Integer trancheEffectifs2 = uniteLegale2.isEmployeur() ? Integer.parseInt(uniteLegale2.getTrancheEffectifs()) : 0;
+            Integer trancheEffectifs1 = uniteLegale1.getIsEmployeur() ? Integer.parseInt(uniteLegale1.getTrancheEffectifs()) : 0;
+            Integer trancheEffectifs2 = uniteLegale2.getIsEmployeur() ? Integer.parseInt(uniteLegale2.getTrancheEffectifs()) : 0;
             return trancheEffectifs1>trancheEffectifs2;
         // Comparaison - alphabétique
         } else {

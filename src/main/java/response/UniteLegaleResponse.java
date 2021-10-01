@@ -35,10 +35,15 @@ public class UniteLegaleResponse implements Serializable {
     private String activitePrincipaleLibelle;
     private String trancheEffectifs;
     private Boolean isEconomieSocialeSolidaire;
+    
+    private Boolean isActivitesArtisanales;
+    private Boolean isLocalisationEtranger;
 
     /* ---------- DEFAULT CONSTRUCTEUR ---------- */
     
-    public UniteLegaleResponse(DatabaseConnection connection,String siren) throws SQLException {
+    public UniteLegaleResponse(DatabaseConnection connection,String siren) throws SQLException 
+    {
+        // Données - Unité Légale
         ResultSet rs = DataAccess.getUniteLegaleData(connection,siren);
         if (rs.next()) {
             this.siren = rs.getString("siren");
@@ -52,6 +57,12 @@ public class UniteLegaleResponse implements Serializable {
             this.activitePrincipaleLibelle = rs.getString("activitePrincipaleLibelle");
             this.trancheEffectifs = rs.getString("trancheEffectifsUniteLegale");
             this.isEconomieSocialeSolidaire = rs.getString("economieSocialeSolidaireUniteLegale").equals("O");
+        }
+        // Données - Etablissements
+        rs = DataAccess.getEtablissementsData(connection,siren);
+        if (rs.next()) {
+            this.isActivitesArtisanales = rs.getBoolean("isActivitesArtisanales");
+            this.isLocalisationEtranger = rs.getBoolean("isLocalisationEtranger");
         }
     }
         
@@ -155,8 +166,16 @@ public class UniteLegaleResponse implements Serializable {
         return isEconomieSocialeSolidaire;
     }
 
-    public Boolean isEmployeur () {
+    public Boolean getIsEmployeur () {
         return !this.trancheEffectifs.equals("NN") & !this.trancheEffectifs.equals("");
     }
 
+    public Boolean getIsActivitesArtisanales() {
+        return isActivitesArtisanales;
+    }
+
+    public Boolean getIsLocalisationEtranger() {
+        return isLocalisationEtranger;
+    }
+    
 }
