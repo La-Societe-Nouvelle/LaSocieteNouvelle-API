@@ -196,37 +196,22 @@ public class DataAccess {
     
     public static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur, String geo, String nace, String flow) throws SQLException 
     {
-        if (nace!=null & geo!=null & flow!=null) 
+        String query = "SELECT * "
+            + "FROM echo.defaultData "
+            + "WHERE indic = '"+indicateur.getCode()+"' AND geo = '"+geo+"' AND nace = '"+nace+"' AND flow = '"+flow+"' "
+            + "ORDER BY year DESC;";
+            
+        ResultSet resultSet = connection.executeQuery(query);
+            
+        if (resultSet.next()) 
         {
-            String query = "SELECT * "
-                + "FROM echo.defaultData "
-                + "WHERE indic = '"+indicateur.getCode()+"' AND geo = '"+geo+"' AND nace = '"+nace+"' AND flow = '"+flow+"' "
-                + "ORDER BY year DESC;";
-            
-            ResultSet resultSet = connection.executeQuery(query);
-            
-            if (resultSet.next()) 
-            {
-                DataResult result = new DataResult(resultSet);
-                return result;
-            } 
-            else 
-            { 
-                // PRD, IC, GAP -> GAP & GVA -> GDP
-                flow = flow.equals("GVA") ? "GDP" : "GAP";
-                return getDefaultData(connection, indicateur, geo, flow); 
-            }
+            DataResult result = new DataResult(resultSet);
+            return result;
         } 
-        else if (geo!=null) 
-        { 
-            // PRD, IC, GAP, null -> GAP & GVA -> GDP
-            flow = flow!=null && flow.equals("GVA") ? "GDP" : "GAP";
-            return getDefaultData(connection, indicateur, geo, flow); 
-        } 
-        else { return getDefaultData(connection, indicateur); }
+        else { return null; }
     }
     
-    private static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur, String geo, String flow) throws SQLException 
+    public static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur, String geo, String flow) throws SQLException 
     {
         String query = "SELECT * "
             + "FROM echo.defaultData "
@@ -240,10 +225,10 @@ public class DataAccess {
             DataResult result = new DataResult(resultSet);
             return result;
         } 
-        else { return getDefaultData(connection, indicateur); }
+        else { return null; }
     }
     
-    private static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur) throws SQLException {
+    public static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur) throws SQLException {
         
         String query = "SELECT * "
             + "FROM echo.defaultData "

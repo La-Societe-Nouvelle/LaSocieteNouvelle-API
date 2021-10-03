@@ -24,7 +24,8 @@ public class DataResult {
     
     /* ----- CONSTRUCTOR ----- */
     
-    public DataResult (ResultSet resultSet) throws SQLException {
+    public DataResult (ResultSet resultSet) throws SQLException 
+    {
         this.value = resultSet.getDouble("value");
         //this.unit = resultSet.getString("unit");
         this.flag = resultSet.getString("flag");

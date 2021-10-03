@@ -87,18 +87,9 @@ public class EmpreinteSocietaleBuilder {
             // only get the value for CSF indicators
             if (indicateur.isIqve()) 
             {
-                // Get the data from the database
-                DataResult rs = DataAccess.getDefaultData(connection, indicateur, pays, nace, flow);
-                
                 // Build the indicator response
-                IndicateurResponse indicateurResponse = new IndicateurResponse(indicateur,
-                    rs.value,
-                    rs.flag,
-                    rs.uncertainty,
-                    rs.time, 
-                    rs.source,
-                    "");
-                
+                IndicateurResponse indicateurResponse = DefaultDataBuilder.getDefaultDataIndicateur(connection, indicateur, pays, nace, flow);
+                // Add to footprint
                 empreinteSocietale.put(indicateur.getCode(),indicateurResponse);
             }
         }
@@ -112,32 +103,19 @@ public class EmpreinteSocietaleBuilder {
     {
         switch (indicateur) 
         {
-            case ART:
-                return getDefaultART();
-            case DIS:
-                return getDefaultDIS();
-            case ECO:
-                return getDefaultECO();
-            case GEQ:
-                return getDefaultGEQ();
-            case GHG:
-                return getDefaultGHG();
-            case HAZ:
-                return getDefaultHAZ();
-            case NRG:
-                return getDefaultNRG();
-            case KNW:
-                return getDefaultKNW();
-            case MAT:
-                return getDefaultMAT();
-            case SOC:
-                return getDefaultSOC();
-            case WAS:
-                return getDefaultWAS();
-            case WAT:
-                return getDefaultWAT();
-            default:
-                return null;
+            case ART: return getDefaultART();
+            case DIS: return getDefaultDIS();
+            case ECO: return getDefaultECO();
+            case GEQ: return getDefaultGEQ();
+            case GHG: return getDefaultGHG();
+            case HAZ: return getDefaultHAZ();
+            case NRG: return getDefaultNRG();
+            case KNW: return getDefaultKNW();
+            case MAT: return getDefaultMAT();
+            case SOC: return getDefaultSOC();
+            case WAS: return getDefaultWAS();
+            case WAT: return getDefaultWAT();
+            default:  return null;
         }
     }
     

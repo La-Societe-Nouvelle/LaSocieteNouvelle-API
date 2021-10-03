@@ -19,10 +19,12 @@ public enum Flow {
     // Valeurs déclarées/publiées
     GAP(    "GAP",          "Gross Available Production"),
     GDP(    "GDP",          "Gross Domestic Production"),
+    GVA(    "GVA",          "Gross Value Added"),
     IC(     "IC",           "Intermediate Consumptions"),
     IMP(    "IMP",          "Importations"),
     NAP(    "NAP",          "Net Available Production"),
     NDP(    "NDP",          "Net Domestic Production"),
+    NVA(    "NVA",          "Net Value Added"),
     PRD(    "PRD",          "Production"),
     TC(     "TC",           "Total Consumptions");
     

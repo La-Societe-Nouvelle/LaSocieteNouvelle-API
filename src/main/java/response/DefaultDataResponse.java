@@ -31,7 +31,7 @@ public class DefaultDataResponse implements Serializable {
         if (activite==null) activite = "00";
         if (flow==null) flow = "GAP";
         
-        if ((pays.matches("[A-Z]{3}") | pays.matches("_DV")) & activite.matches("[0-9]{2}") & Flow.isCodeCorrect(flow)) {
+        if ((pays.matches("[A-Z]{3}") || pays.matches("_DV")) && activite.matches("[0-9]{2}") && Flow.isCodeCorrect(flow)) {
             try {
                 empreinteSocietale = new EmpreinteSocietale(connection, pays, activite, flow);
                 header.setStatut(Statut.OK);

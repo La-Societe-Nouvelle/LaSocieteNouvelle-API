@@ -39,12 +39,16 @@ public class IndicateurResponse {
     /* ---------- Constructors ---------- */
     
     // Default constructor (used published data or returning value null)
-    public IndicateurResponse (DatabaseConnection connection,Indicateur indicateur,UniteLegaleResponse uniteLegale) throws SQLException {
+    public IndicateurResponse (DatabaseConnection connection,
+                               Indicateur indicateur,
+                               UniteLegaleResponse uniteLegale) throws SQLException 
+    {
         code = indicateur.getCode();
         libelle = indicateur.getLibelle();
         unit = indicateur.getUnit();
         DataResult rs = DataAccess.getIndicateurData(connection, indicateur, uniteLegale);
-        if (rs!=null) {
+        if (rs!=null) 
+        {
             this.value = round(rs.value,indicateur.getPrecision());
             this.flag = rs.flag;
             this.uncertainty = round(rs.uncertainty,0);
@@ -58,8 +62,11 @@ public class IndicateurResponse {
     // Full constructor (all attributs in parameters)
     public IndicateurResponse (Indicateur indicateur,
                                Double value,
-                               String flag,Double uncertainty,String year,
-                               String source,String info) {
+                               String flag,
+                               Double uncertainty,
+                               String year,
+                               String source,String info) 
+    {
         this.code = indicateur.getCode();
         this.libelle = indicateur.getLibelle();
         this.unit = indicateur.getUnit();
