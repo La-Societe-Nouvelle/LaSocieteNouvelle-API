@@ -30,9 +30,9 @@ public class DefaultDataBuilder {
         // fetch default data
         DataResult rs = DataAccess.getDefaultData(connection, indicateur, pays, nace, flow);
         
-        if (rs!=null)
+        if (rs!=null) // -> default data available in database
         {
-            // Build the indicator response
+            // Return the data
             return new IndicateurResponse(indicateur,
                 rs.value,
                 rs.flag,
@@ -41,8 +41,9 @@ public class DefaultDataBuilder {
                 rs.source,
                 "");
         }
-        else if (nace.equals("00"))
+        else if (nace.equals("00")) // -> data for economic area not available (header -> data not available)
         {
+            // Fetch default data
             rs = DataAccess.getDefaultData(connection, indicateur);
             return new IndicateurResponse(indicateur,
                 rs.value,
@@ -54,7 +55,7 @@ public class DefaultDataBuilder {
         }
         else
         {
-            // Calculate the default value & Build the indicator response
+            // Build the default value with ratio
             return buildDefaultDataIndicateur(connection, indicateur, pays, nace, flow);
         }
     }
@@ -229,7 +230,7 @@ public class DefaultDataBuilder {
     // default data for indicator KNW
     private static IndicateurResponse buildDefaultDataKNW(DatabaseConnection connection, String pays, String nace, String flow) throws SQLException
     {
-        DataResult rs = DataAccess.getDefaultData(connection, Indicateur.KNW, pays, flow.equals("GAP") ? "GDP" : "GVA");
+        DataResult rs = DataAccess.getDefaultData(connection, Indicateur.KNW, pays, flow.equals("GVA") ? "GDP" : "GAP");
         if (rs == null) rs = DataAccess.getDefaultData(connection, Indicateur.KNW);
             
         return new IndicateurResponse(Indicateur.KNW,
@@ -300,7 +301,7 @@ public class DefaultDataBuilder {
     {
         if (pays.equals("FRA"))     // should not be reached
         {
-            DataResult rs = DataAccess.getDefaultData(connection, Indicateur.SOC, pays, flow.equals("GAP") ? "GDP" : "GVA");
+            DataResult rs = DataAccess.getDefaultData(connection, Indicateur.SOC, pays, flow.equals("GVA") ? "GDP" : "GAP");
             return new IndicateurResponse(Indicateur.SOC,
                 rs.value,
                 Flag.DEFAULT_DATA.getCode(),

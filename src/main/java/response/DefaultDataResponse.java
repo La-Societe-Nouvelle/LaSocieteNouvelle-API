@@ -27,21 +27,25 @@ public class DefaultDataResponse implements Serializable {
     public DefaultDataResponse (DatabaseConnection connection, String pays, String activite, String flow) {
         
         header = new HeaderResponse();
+        
         if (pays==null) pays = "_DV";
         if (activite==null) activite = "00";
-        if (flow==null) flow = "GAP";
+        if (flow==null) flow = activite.equals("00") ? "GAP" : "PRD";
         
-        if ((pays.matches("[A-Z]{3}") || pays.matches("_DV")) && activite.matches("[0-9]{2}") && Flow.isCodeCorrect(flow)) {
-            try {
+        if ((pays.matches("[A-Z]{3}") || pays.matches("_DV")) && activite.matches("[0-9]{2}") && Flow.isCodeCorrect(flow,activite)) 
+        {
+            try 
+            {
                 empreinteSocietale = new EmpreinteSocietale(connection, pays, activite, flow);
                 header.setStatut(Statut.OK);
-            } catch (SQLException ex) {
+            } 
+            catch (SQLException ex) 
+            {
                 header.setStatut(Statut.SERVER_ERROR);
                 Logger.getLogger(DefaultDataResponse.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else {
-            header.setStatut(Statut.BAD_REQUEST);
-        }
+        } 
+        else {header.setStatut(Statut.BAD_REQUEST);}
         
     }
     

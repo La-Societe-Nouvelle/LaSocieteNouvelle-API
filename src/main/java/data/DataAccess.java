@@ -70,9 +70,7 @@ public class DataAccess {
                 + "WHERE etablissement.siren = '" + siren + "' "
                     + "AND etablissement.statutDiffusionEtablissement = 'O' "
                     + "AND etablissement.etatAdministratifEtablissement = 'A';";
-        
-        System.out.println(query);
-        
+                
         ResultSet resultSet = connection.executeQuery(query);
         return resultSet;
     }

@@ -51,8 +51,8 @@ public class EmpreinteSocietale {
     }
     
     // Constructor used to get default data (macroeconomic scale)
-    public EmpreinteSocietale(DatabaseConnection connection, String pays, String nace, String flow) throws SQLException {
-        
+    public EmpreinteSocietale(DatabaseConnection connection, String pays, String nace, String flow) throws SQLException 
+    {
         // Initialize the builder
         EmpreinteSocietaleBuilder builder = new EmpreinteSocietaleBuilder(connection);
         

@@ -16,16 +16,18 @@ public enum Flow {
     //      CODE            LABEL
     // ------------------------------------------------------------------------------------------
     
-    // Valeurs déclarées/publiées
+    // Flux - Espaces économiques
     GAP(    "GAP",          "Gross Available Production"),
     GDP(    "GDP",          "Gross Domestic Production"),
+    IMP(    "IMP",          "Importations"),
+    // Flux - Branches d'activités
+    PRD(    "PRD",          "Production"),
     GVA(    "GVA",          "Gross Value Added"),
     IC(     "IC",           "Intermediate Consumptions"),
-    IMP(    "IMP",          "Importations"),
+    // Autres flux
     NAP(    "NAP",          "Net Available Production"),
     NDP(    "NDP",          "Net Domestic Production"),
     NVA(    "NVA",          "Net Value Added"),
-    PRD(    "PRD",          "Production"),
     TC(     "TC",           "Total Consumptions");
     
     // ------------------------------------------------------------------------------------------
@@ -49,6 +51,24 @@ public enum Flow {
             if (flow.code.equals(code)) return true;
         }
         return false;
+    }
+    
+    public static Boolean isCodeCorrect(String code,String activite) 
+    {
+        // Espaces économiques
+        if (activite.equals("00"))
+        {
+            return (code.equals(GAP.code) 
+                 || code.equals(GDP.code) 
+                 || code.equals(IMP.code));
+        }
+        // Branches d'activités
+        else 
+        {
+            return (code.equals(PRD.code) 
+                 || code.equals(GVA.code) 
+                 || code.equals(IC.code));
+        }
     }
     
     /* ---------- Getters ---------- */
