@@ -32,6 +32,10 @@ public class DefaultDataResponse implements Serializable {
         if (activite==null) activite = "00";
         if (flow==null) flow = activite.equals("00") ? "GAP" : "PRD";
         
+        if (activite.equals("00") && flow.equals("PRD")) flow = "GAP";
+        if (activite.equals("00") && flow.equals("GVA")) flow = "GDP";
+        if (activite.equals("00") && flow.equals("IC")) flow = "GAP";
+        
         if ((pays.matches("[A-Z]{3}") || pays.matches("_DV")) && activite.matches("[0-9]{2}") && Flow.isCodeCorrect(flow,activite)) 
         {
             try 

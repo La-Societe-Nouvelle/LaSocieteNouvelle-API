@@ -50,14 +50,12 @@ public class EmpreinteSocietaleBuilder {
         
         // Build the comparatives values
         HashMap<String,IndicateurResponse> empreinteSocietaleReference = buildEmpreinteSocietaleUniteLegale("FRA",uniteLegale.getActivitePrincipale().substring(0,2), "PRD");
-        
         for (Indicateur indicateur : Indicateur.values()) 
         {
             // Try to get the value from the database (specific value for the legal unit)
             IndicateurResponse indicateurResponse = new IndicateurResponse(connection, indicateur, uniteLegale);
-                        
             // Calculate the default value if there is no value published & the indicator is include in the CSF
-            if (indicateurResponse.getValue()==null & indicateur.isIqve()) 
+            if (indicateurResponse.getValue()==null && indicateur.isIqve()) 
             {
                 indicateurResponse = getDefaultIndicateurResponse(indicateur);
             }
@@ -123,7 +121,7 @@ public class EmpreinteSocietaleBuilder {
     private IndicateurResponse getDefaultART() throws SQLException 
     {
         // Retrieve the net value added rate (according to the economic division)
-        DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
+        DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "PRD");
         
         // Retrieve the default value for intermediate consumption (according to the economic division)
         DataResult art_ic = DataAccess.getDefaultData(connection, Indicateur.ART, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "IC");
@@ -171,7 +169,7 @@ public class EmpreinteSocietaleBuilder {
          || uniteLegale.getTrancheEffectifs().equals("1")) 
         {
             // Retrieve the net value added rate (according to the economic division)
-            DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
+            DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "PRD");
             // Retrieve the default value for intermediate consumption (according to the economic division)
             DataResult dis_ic = DataAccess.getDefaultData(connection, Indicateur.DIS, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "IC");
             
@@ -210,7 +208,7 @@ public class EmpreinteSocietaleBuilder {
     private IndicateurResponse getDefaultECO() throws SQLException 
     {
         // Retrieve the net value added rate (according to the economic division)
-        DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
+        DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "PRD");
         // Retrieve the default value for intermediate consumption (according to the economic division)
         DataResult eco_ci = DataAccess.getDefaultData(connection, Indicateur.ECO, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "IC");
         
@@ -254,7 +252,7 @@ public class EmpreinteSocietaleBuilder {
          || uniteLegale.getTrancheEffectifs().equals("1")) 
         {
             // Retrieve the net value added rate (according to the economic division)
-            DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
+            DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "PRD");
             // Retrieve the default value for intermediate consumption (according to the economic division)
             DataResult geq_ic = DataAccess.getDefaultData(connection, Indicateur.GEQ, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "IC");
             
@@ -327,7 +325,7 @@ public class EmpreinteSocietaleBuilder {
          || uniteLegale.getActivitePrincipale().substring(0,2).equals("85"))
         {
             // Retrieve the net value added rate (according to the economic division)
-            DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
+            DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "PRD");
             // Retrieve the default value for intermediate consumption (according to the economic division)
             DataResult knw_ic = DataAccess.getDefaultData(connection, Indicateur.KNW, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "IC");
             
@@ -396,7 +394,7 @@ public class EmpreinteSocietaleBuilder {
     private IndicateurResponse getDefaultSOC() throws SQLException 
     {
         // Retrieve the net value added rate (according to the economic division)
-        DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "GDP");
+        DataResult nva_rate = DataAccess.getDefaultData(connection, Indicateur.NVA, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "PRD");
         // Retrieve the default value for intermediate consumption (according to the economic division)
         DataResult soc_ic = DataAccess.getDefaultData(connection, Indicateur.SOC, "FRA", uniteLegale.getActivitePrincipale().substring(0,2), "IC");
         
@@ -456,7 +454,7 @@ public class EmpreinteSocietaleBuilder {
     private IndicateurResponse getDefaultWAT() throws SQLException 
     {
         // Retrieve the default value for production (according to the economic division)
-        DataResult rs = DataAccess.getDefaultData(connection, Indicateur.WAT, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "GDP");
+        DataResult rs = DataAccess.getDefaultData(connection, Indicateur.WAT, "FRA", uniteLegale.getActivitePrincipale().substring(0, 2), "PRD");
         
         return new IndicateurResponse(Indicateur.WAT,
             rs.value,
