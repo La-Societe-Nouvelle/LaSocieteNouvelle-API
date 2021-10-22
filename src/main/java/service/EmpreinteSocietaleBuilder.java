@@ -50,6 +50,7 @@ public class EmpreinteSocietaleBuilder {
         
         // Build the comparatives values
         HashMap<String,IndicateurResponse> empreinteSocietaleReference = buildEmpreinteSocietaleUniteLegale("FRA",uniteLegale.getActivitePrincipale().substring(0,2), "PRD");
+        
         for (Indicateur indicateur : Indicateur.values()) 
         {
             // Try to get the value from the database (specific value for the legal unit)

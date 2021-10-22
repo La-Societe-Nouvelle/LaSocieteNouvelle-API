@@ -16,6 +16,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import response.DataSerieResponse;
 import response.DefaultDataResponse;
 
 /**  API - LA SOCIETE NOUVELLE | FACADE REST
@@ -65,6 +66,32 @@ public class ApiFacadeREST {
         
         // Construction de la réponse
         SingleResponse response = new SingleResponse(connection,siren);
+        
+        //Fermeture de la connection
+        connection.close();
+        
+        return response;
+    }
+    
+    /* SERVICE - SERIES
+    ----------------------------------------------------------------------------------------------------
+    Description : get evolution of indicator at macro scale
+    ----------------------------------------------------------------------------------------------------
+    */
+    
+    @GET
+    @Path("/serie")
+    @Produces({MediaType.APPLICATION_JSON})
+    public DataSerieResponse getDataSerie (
+            @QueryParam("indic") String indic,
+            @QueryParam("area") String area,
+            @QueryParam("flow") String flow) {
+        
+        // Connection à la base de données
+        DatabaseConnection connection = new DatabaseConnection();
+        
+        // Construction de la réponse
+        DataSerieResponse response = new DataSerieResponse(connection,indic,area,flow);
         
         //Fermeture de la connection
         connection.close();

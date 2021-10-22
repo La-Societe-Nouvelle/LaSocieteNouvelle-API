@@ -12,7 +12,6 @@ import meta.Flag;
 import meta.Indicateur;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**

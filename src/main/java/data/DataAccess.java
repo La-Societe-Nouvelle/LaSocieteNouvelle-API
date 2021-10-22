@@ -170,7 +170,7 @@ public class DataAccess {
         return resultSet;
     }
     
-    /* ----- DONNEES PAR DEFAUT ----- */
+    /* ----- DONNEES PUBLIEES ----- */
     
     public static DataResult getIndicateurData(DatabaseConnection connection, Indicateur indicateur, UniteLegaleResponse uniteLegaleResponse) throws SQLException 
     {
@@ -242,6 +242,20 @@ public class DataAccess {
             return result;
         } 
         else { return null; }
+    }
+    
+    /* ----- SERIES ----- */
+    
+    public static ResultSet getDataSerie(DatabaseConnection connection, Indicateur indicateur, String area, String flow) throws SQLException
+    {
+        String query = "SELECT * "
+            + "FROM echo.seriesData "
+            + "WHERE indic = '"+indicateur.getCode()+"' AND geo = '"+area+"' AND flow = '"+flow+"' "
+            + "ORDER BY time;";
+        
+        ResultSet resultSet = connection.executeQuery(query);
+        
+        return resultSet;
     }
     
     /* ----- DATA RESULT ----- */
