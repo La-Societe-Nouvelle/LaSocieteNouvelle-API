@@ -47,36 +47,26 @@ public class EmpreinteSocietaleBuilder {
         
         // Initialize the set of indicators
         HashMap<String,IndicateurResponse> empreinteSocietale = new HashMap<>();
-        
-        // Build the comparatives values
-        HashMap<String,IndicateurResponse> empreinteSocietaleReference = buildEmpreinteSocietaleUniteLegale("FRA",uniteLegale.getActivitePrincipale().substring(0,2), "PRD");
-        
+                
         for (Indicateur indicateur : Indicateur.values()) 
         {
             // Try to get the value from the database (specific value for the legal unit)
             IndicateurResponse indicateurResponse = new IndicateurResponse(connection, indicateur, uniteLegale);
-            // Calculate the default value if there is no value published & the indicator is include in the CSF
-            if (indicateurResponse.getValue()==null && indicateur.isIqve()) 
-            {
-                indicateurResponse = getDefaultIndicateurResponse(indicateur);
-            }
             
-            // Set the comparative value for the CSF indicators (for which a comparative value is available)
-            if (indicateur.isIqve()) 
-            {
-                indicateurResponse.setReference(empreinteSocietaleReference.get(indicateur.getCode()));
-                empreinteSocietale.put(indicateur.getCode(),indicateurResponse);
-            }
+            // Calculate the default value if there is no value published & the indicator is include in the CSF
+            if (indicateurResponse.getValue()==null && indicateur.isIqve()) indicateurResponse = getDefaultIndicateurResponse(indicateur);
             
             // Put the indicator in the corporate social footprint
-            if (indicateurResponse.getValue()!=null) empreinteSocietale.put(indicateur.getCode(),indicateurResponse);
+            if (indicateurResponse.getValue()!=null) {
+                empreinteSocietale.put(indicateur.getCode(),indicateurResponse);
+            }
         }
         
         return empreinteSocietale;
     }
     
     // Build a default social footprint based on the country and the main activity
-    public HashMap<String,IndicateurResponse> buildEmpreinteSocietaleUniteLegale(String pays, String nace, String flow) throws SQLException 
+    public HashMap<String,IndicateurResponse> buildEmpreinteSocietaleDefaultData(String pays, String nace, String flow) throws SQLException 
     {
         // Initialize the set of indicators
         HashMap<String,IndicateurResponse> empreinteSocietale = new HashMap<>();

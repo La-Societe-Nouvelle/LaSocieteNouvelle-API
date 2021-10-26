@@ -59,7 +59,7 @@ public class EmpreinteSocietale {
         // Build the indicators (from country, activity, flow)
         try  
         {
-            indicateurs = builder.buildEmpreinteSocietaleUniteLegale(pays, nace, flow);
+            indicateurs = builder.buildEmpreinteSocietaleDefaultData(pays, nace, flow);
         } 
         catch (NullPointerException ex) {
             indicateurs = null;

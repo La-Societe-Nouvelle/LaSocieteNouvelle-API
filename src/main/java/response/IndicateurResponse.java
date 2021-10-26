@@ -30,10 +30,6 @@ public class IndicateurResponse {
     private String source;
     private String info;
     private Flag indice;
-    private Double valueReference;
-    private String valueReferenceYear;
-    private String valueReferenceSource;
-    private String valueReferenceInfo;
         
     /* ---------- Constructors ---------- */
     
@@ -98,12 +94,6 @@ public class IndicateurResponse {
     public void setInfo(String info) {
         this.info = info;
     }
-    public void setReference(IndicateurResponse indicateurReference) {
-        this.valueReference = indicateurReference.getValue();
-        this.valueReferenceYear = indicateurReference.getYear();
-        this.valueReferenceSource = indicateurReference.getSource();
-        this.valueReferenceInfo = indicateurReference.getInfo();
-    }
   
     /* ----- GETTERS ----- */
 
@@ -140,20 +130,7 @@ public class IndicateurResponse {
     public Boolean isValueDeclared () {
         return indice.isDeclared();
     }
-    public Double getValueReference() {
-        return valueReference;
-    }
-    public String getValueReferenceYear() {
-        return valueReferenceYear;
-    }
-    public String getValueReferenceSource() {
-        return valueReferenceSource;
-    }
-    public String getValueReferenceInfo() {
-        return valueReferenceInfo;
-    }
-    
-    
+        
     /* ----- UTILS ----- */
     
     private static Double round(Double value,Integer precision) {
