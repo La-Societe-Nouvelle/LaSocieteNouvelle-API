@@ -45,7 +45,7 @@ public class IndicateurResponse {
         if (rs!=null) 
         {
             this.value = round(rs.value,indicateur.getPrecision());
-            this.flag = rs.flag;
+            this.flag = Flag.PUBLICATION.getCode();
             this.uncertainty = round(rs.uncertainty,0);
             this.year = rs.time;
             this.source = rs.source;
@@ -120,7 +120,7 @@ public class IndicateurResponse {
     }
     public String getSource() {
         return source;
-    }
+    } 
     public String getInfo() {
         return info;
     }

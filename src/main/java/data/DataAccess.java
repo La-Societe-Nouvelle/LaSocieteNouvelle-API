@@ -191,12 +191,37 @@ public class DataAccess {
     }
     
     /* ----- DONNEES PAR DEFAUT ----- */
-    
-    public static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur, String geo, String nace, String flow) throws SQLException 
+        
+    public static DataResult getDivisionData(DatabaseConnection connection, 
+                                            Indicateur indicateur, 
+                                            String area, 
+                                            String division, 
+                                            String flow) throws SQLException 
     {
         String query = "SELECT * "
-            + "FROM echo.defaultData "
-            + "WHERE indic = '"+indicateur.getCode()+"' AND geo = '"+geo+"' AND nace = '"+nace+"' AND flow = '"+flow+"' "
+            + "FROM echo.divisionsData "
+            + "WHERE indic = '"+indicateur.getCode()+"' AND area = '"+area+"' AND division = '"+division+"' AND flow = '"+flow+"' "
+            + "ORDER BY year DESC;";
+        
+        ResultSet resultSet = connection.executeQuery(query);
+            
+        if (resultSet.next()) 
+        {
+            DataResult result = new DataResult(resultSet);
+            return result;
+        } 
+        else { return null; }
+    }
+    
+    public static DataResult getBrancheData(DatabaseConnection connection, 
+                                            Indicateur indicateur, 
+                                            String area, 
+                                            String branche, 
+                                            String flow) throws SQLException 
+    {
+        String query = "SELECT * "
+            + "FROM echo.branchesData "
+            + "WHERE indic = '"+indicateur.getCode()+"' AND area = '"+area+"' AND branche = '"+branche+"' AND flow = '"+flow+"' "
             + "ORDER BY year DESC;";
             
         ResultSet resultSet = connection.executeQuery(query);
@@ -209,15 +234,18 @@ public class DataAccess {
         else { return null; }
     }
     
-    public static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur, String geo, String flow) throws SQLException 
+    public static DataResult getAreaData(DatabaseConnection connection, 
+                                         Indicateur indicateur, 
+                                         String area, 
+                                         String flow) throws SQLException 
     {
         String query = "SELECT * "
-            + "FROM echo.defaultData "
-            + "WHERE indic = '"+indicateur.getCode()+"' AND geo = '"+geo+"' AND nace = '00' AND flow = '"+flow+"' "
+            + "FROM echo.areasData "
+            + "WHERE indic = '"+indicateur.getCode()+"' AND area = '"+area+"' AND flow = '"+flow+"' "
             + "ORDER BY year DESC;";
-        
+            
         ResultSet resultSet = connection.executeQuery(query);
-        
+            
         if (resultSet.next()) 
         {
             DataResult result = new DataResult(resultSet);
@@ -225,13 +253,12 @@ public class DataAccess {
         } 
         else { return null; }
     }
-    
-    public static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur) throws SQLException {
         
+    public static DataResult getDefaultData(DatabaseConnection connection, Indicateur indicateur) throws SQLException 
+    {
         String query = "SELECT * "
             + "FROM echo.defaultData "
             + "WHERE indic = '"+indicateur.getCode()+"' AND geo = '_DV' AND nace = '00' AND flow = 'GAP' "
-                //+ "AND unit = '"+indicateur.getUnit()+"' "
             + "ORDER BY year DESC;";
         
         ResultSet resultSet = connection.executeQuery(query);

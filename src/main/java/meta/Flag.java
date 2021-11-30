@@ -16,17 +16,14 @@ public enum Flag {
     // VARIABLE             CODE    LABEL                                   DECLARED    ADJUSTED
     // ------------------------------------------------------------------------------------------
     
-    // Valeurs déclarées/publiées
+    // Valeurs déclarées/publiées/estimées
     PUBLICATION(            "p",    "Valeur déclarée",                      true,       true),
     PUBLIC_REPORTING(       "r",    "Valeur publique",                      false,      true),
-    
-    // Valeurs ajustées
-    SIMPLIFIED_PUBLICATION( "h",    "Valeur déclarée sur valeur ajoutée",   true,       true),
     ESTIMATION(             "e",    "Valeur estimée",                       false,      true),
-    ADJUSTED_DATA(          "a",    "Valeur ajustée",                       false,      true),
     
-    // Valeurs par defaut
-    SECTOR_SPECIFIC_DATA(   "s",    "Valeur sectorielle",                   false,      false),
+    // Valeurs par défaut
+    MACROECONOMIC_DATA(     "m",    "Valeur déclarée sur valeur ajoutée",   true,       true),
+    ADJUSTED_DATA(          "a",    "Valeur ajustée",                       false,      true),
     DEFAULT_DATA(           "d",    "Valeur par défaut",                    false,      false),
     
     // Valeur non applicable
@@ -76,16 +73,14 @@ public enum Flag {
         {
             case "p" :
                 return PUBLICATION;
-            case "h" :
-                return SIMPLIFIED_PUBLICATION;
+            case "m" :
+                return MACROECONOMIC_DATA;
             case "r" :
                 return PUBLIC_REPORTING;
             case "e" :
                 return ESTIMATION;
             case "a" :
                 return ADJUSTED_DATA;
-            case "s" :
-                return SECTOR_SPECIFIC_DATA;
             case "d" :
                 return DEFAULT_DATA;
             case "n" :

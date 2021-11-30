@@ -13,7 +13,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import meta.Flow;
 
 /**
  *
@@ -24,23 +23,18 @@ public class DefaultDataResponse implements Serializable {
     private HeaderResponse header;
     private EmpreinteSocietale empreinteSocietale;
     
-    public DefaultDataResponse (DatabaseConnection connection, String pays, String activite, String flow) {
-        
+    public DefaultDataResponse (DatabaseConnection connection, 
+                                String area, 
+                                String activity, 
+                                String flow) 
+    {
         header = new HeaderResponse();
-        
-        if (pays==null) pays = "_DV";
-        if (activite==null) activite = "00";
-        if (flow==null) flow = activite.equals("00") ? "GAP" : "PRD";
-        
-        if (activite.equals("00") && flow.equals("PRD")) flow = "GAP";
-        if (activite.equals("00") && flow.equals("GVA")) flow = "GDP";
-        if (activite.equals("00") && flow.equals("IC")) flow = "GAP";
-        
-        if ((pays.matches("[A-Z]{3}") || pays.matches("_DV")) && activite.matches("[0-9]{2}") && Flow.isCodeCorrect(flow,activite)) 
+                        
+        if (area!=null && activity!=null && flow!=null) 
         {
             try 
             {
-                empreinteSocietale = new EmpreinteSocietale(connection, pays, activite, flow);
+                empreinteSocietale = new EmpreinteSocietale(connection, area, activity, flow);
                 header.setStatut(Statut.OK);
             } 
             catch (SQLException ex) 

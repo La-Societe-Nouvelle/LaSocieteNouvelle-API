@@ -59,8 +59,8 @@ public class ApiFacadeREST {
     @Path("/siren/{siren}")
     @Produces({MediaType.APPLICATION_JSON})
     public SingleResponse findProfilSocialBySiren (
-            @PathParam("siren") String siren) {
-        
+            @PathParam("siren") String siren) 
+    {
         // Connection à la base de données
         DatabaseConnection connection = new DatabaseConnection();
         
@@ -85,8 +85,8 @@ public class ApiFacadeREST {
     public DataSerieResponse getDataSerie (
             @QueryParam("indic") String indic,
             @QueryParam("area") String area,
-            @QueryParam("flow") String flow) {
-        
+            @QueryParam("flow") String flow) 
+    {
         // Connection à la base de données
         DatabaseConnection connection = new DatabaseConnection();
         
@@ -110,10 +110,17 @@ public class ApiFacadeREST {
     @Produces({MediaType.APPLICATION_JSON})
     public MultipleResponse searchUniteLegale (
             @QueryParam("denomination") String denomination,
-            @QueryParam("page") Integer numPage) {
+            @QueryParam("page") Integer numPage) 
+    {
+        // Connection à la base de données
         DatabaseConnection connection = new DatabaseConnection();
+        
+        // Construction de la réponse
         MultipleResponse response = new MultipleResponse(connection,denomination,numPage);
+        
+        //Fermeture de la connection
         connection.close();
+        
         return response;
     }
         
@@ -125,13 +132,20 @@ public class ApiFacadeREST {
     @GET
     @Path("/default")
     @Produces({MediaType.APPLICATION_JSON})
-    public DefaultDataResponse findProfilSocialDefault (
-            @QueryParam("pays") String pays,
-            @QueryParam("activite") String activite,
-            @QueryParam("flow") String flow) {
+    public DefaultDataResponse fetchDefaultData (
+            @QueryParam("area") String pays,
+            @QueryParam("activity") String activite,
+            @QueryParam("flow") String flow) 
+    {
+        // Connection à la base de données
         DatabaseConnection connection = new DatabaseConnection();
+        
+        // Construction de la réponse
         DefaultDataResponse response = new DefaultDataResponse(connection, pays, activite, flow);
+        
+        //Fermeture de la connection
         connection.close();
+        
         return response;
     }
         

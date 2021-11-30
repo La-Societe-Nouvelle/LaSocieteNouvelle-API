@@ -51,7 +51,10 @@ public class EmpreinteSocietale {
     }
     
     // Constructor used to get default data (macroeconomic scale)
-    public EmpreinteSocietale(DatabaseConnection connection, String pays, String nace, String flow) throws SQLException 
+    public EmpreinteSocietale(DatabaseConnection connection, 
+                              String area, 
+                              String activity, 
+                              String flow) throws SQLException 
     {
         // Initialize the builder
         EmpreinteSocietaleBuilder builder = new EmpreinteSocietaleBuilder(connection);
@@ -59,7 +62,7 @@ public class EmpreinteSocietale {
         // Build the indicators (from country, activity, flow)
         try  
         {
-            indicateurs = builder.buildEmpreinteSocietaleDefaultData(pays, nace, flow);
+            indicateurs = builder.buildEmpreinteSocietaleDefaultData(area, activity, flow);
         } 
         catch (NullPointerException ex) {
             indicateurs = null;

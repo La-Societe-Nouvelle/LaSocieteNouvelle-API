@@ -38,7 +38,8 @@ public class SingleResponse implements Serializable {
         // check if the pattern of the siren number is correct
         if (siren.matches("[0-9]{9}")) {
             
-            try {
+            try 
+            {
                 // Buil the response
                 profil = new ProfilSocialResponse(connection,header,siren);
              
